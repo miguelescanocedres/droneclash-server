@@ -8,13 +8,33 @@ Este proyecto contiene el código fuente del servidor backend para "Drone Clash"
 - **Framework**: Spring Boot 3.x
 - **Comunicación**: Spring WebSocket
 - **Serialización**: Jackson (para JSON)
-- **Gestor de Dependencias**: Maven
+- **Gestor de Dependencias y Construcción**: Maven
+
+---
+
+## Conceptos Clave: Maven y el `pom.xml`
+
+### ¿Qué es Maven?
+
+Maven es una herramienta de **automatización de la compilación y gestión de proyectos** para Java. Piensa en él como el "jefe de taller" de tu proyecto. Sus tareas principales son:
+
+1.  **Gestión de Dependencias**: Lee la lista de "ingredientes" (librerías externas) que necesitas desde el `pom.xml` y las descarga automáticamente de internet. También descarga las dependencias de esas dependencias, ahorrando un enorme trabajo manual.
+2.  **Ciclo de Vida de Construcción**: Define un proceso estándar para compilar, probar y empaquetar el proyecto. Esto asegura que el proyecto se construya de forma consistente en cualquier máquina.
+3.  **Estandarización**: Fomenta una estructura de directorios estándar (`src/main/java`, `src/test/java`), lo que facilita la navegación y comprensión de cualquier proyecto que use Maven.
+
+### ¿Qué es el `pom.xml`?
+
+El archivo `pom.xml` (Project Object Model) es el **cerebro del proyecto Maven**. Es un archivo de configuración que le dice a Maven todo lo que necesita saber:
+
+- **Identificación**: Define el nombre, grupo y versión del proyecto.
+- **Dependencias**: Contiene la lista de todas las librerías externas que el proyecto necesita para funcionar (por ejemplo, Spring Boot, WebSocket, etc.).
+- **Instrucciones de Construcción (Build)**: Especifica cómo debe empaquetarse la aplicación, por ejemplo, en un archivo `.jar` ejecutable que incluye todas sus dependencias.
+
+En resumen, tú declaras **qué** necesitas en el `pom.xml`, y Maven se encarga de **cómo** obtenerlo y construirlo.
 
 ---
 
 ## Estructura del Proyecto
-
-A continuación se describe la función de los paquetes y archivos más importantes del proyecto.
 
 ```
 .
@@ -34,7 +54,7 @@ A continuación se describe la función de los paquetes y archivos más importan
 
 ### Archivos y Paquetes Principales
 
-- **`pom.xml`**: El corazón de la configuración del proyecto Maven. Define las dependencias necesarias (como `spring-boot-starter-web` y `spring-boot-starter-websocket`), la versión de Java y cómo debe compilarse el proyecto.
+- **`pom.xml`**: El corazón de la configuración del proyecto Maven, como se describió anteriormente.
 
 - **`DroneClashServerApplication.java`**: Es el punto de entrada de la aplicación. La anotación `@SpringBootApplication` se encarga de auto-configurar el proyecto, y el método `main` inicia el servidor web Tomcat embebido y toda la aplicación Spring.
 
