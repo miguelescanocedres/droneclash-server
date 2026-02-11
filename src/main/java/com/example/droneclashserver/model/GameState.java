@@ -58,4 +58,14 @@ public class GameState {
     public void setDrones(List<DroneData> drones) {
         this.drones = drones;
     }
+
+    private TableroData tablero;
+
+    public TableroData getTablero() {
+        return tablero;
+    }
+
+    public void setTablero(TableroData tablero) {
+        this.tablero = tablero;
+    }
 }
