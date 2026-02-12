@@ -57,6 +57,46 @@ El proyecto está organizado en paquetes con responsabilidades bien definidas pa
         3.  "Traducir" los objetos complejos de la `LogicaNegocio` (como `Partida`) a los DTOs simples (como `EstadoJuego`) que el cliente entiende.
 
 ---
+COMO FUNCIONAN LOS DTO
+
+Aquí te explico el rol de cada uno y por qué son indispensables:
+•
+AccionJuego.java:
+◦
+Rol: Representa una orden que envía el cliente al servidor.
+◦
+Uso: Es el parámetro de entrada del método procesarAccion. Es fundamental para recibir las acciones del jugador.
+•
+EstadoJuego.java:
+◦
+Rol: Es el objeto "contenedor" principal que recibe el cliente. Contiene toda la información necesaria para dibujar el estado completo del juego.
+◦
+Uso: Es el objeto que ServicioJuego construye y que el ControladorJuego envía como respuesta.
+•
+DatosDrone.java y DatosPortaDron.java:
+◦
+Rol: Representan las "fichas técnicas" de las unidades individuales.
+◦
+Uso: EstadoJuego contiene listas de estos objetos (List<DatosDrone>). No puedes tener un EstadoJuego sin ellos. ServicioJuego los crea en el bucle for para rellenar esas listas.
+•
+DatosTablero.java y DatosCelda.java:
+◦
+Rol: Representan la estructura del tablero y qué celdas están ocupadas.
+◦
+Uso: EstadoJuego contiene un objeto DatosTablero. A su vez, DatosTablero contiene una lista de DatosCelda. Son necesarios para que el cliente sepa dónde están las unidades sin tener que recalcularlo.
+En resumen:
+Tu EstadoJuego es como una muñeca rusa. Para construirlo, necesitas todas las piezas:
+•
+EstadoJuego contiene...
+◦
+una lista de DatosDrone.
+◦
+una lista de DatosPortaDron.
+◦
+un objeto DatosTablero, que a su vez contiene...
+▪
+una lista de DatosCelda.
+Y para recibir órdenes, necesitas AccionJuego.
 
 ## Flujo de una Acción: "Mover un Dron"
 
