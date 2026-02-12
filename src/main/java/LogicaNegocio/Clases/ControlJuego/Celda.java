@@ -19,7 +19,7 @@ public class Celda {
     public int getColumna() { return columna; }
 
     public boolean estaOcupada() { return ocupada; }
--
+
     public Unidad getUnidad() { return unidad; }
 
     public void colocarUnidad(Unidad unidad) {

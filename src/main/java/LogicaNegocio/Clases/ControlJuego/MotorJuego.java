@@ -4,6 +4,7 @@ import LogicaNegocio.Clases.ClasesAuxiliares.Posicion;
 import LogicaNegocio.Clases.ObjetosJuego.Dron;
 import LogicaNegocio.Clases.ObjetosJuego.PortaDrones;
 import LogicaNegocio.Clases.ObjetosJuego.Unidad;
+import LogicaNegocio.Excepciones.ReglaJuegoException;
 
 public class MotorJuego {
     private Partida partidaActual;
@@ -16,30 +17,51 @@ public class MotorJuego {
         return partidaActual;
     }
 
-    public boolean procesarMoverDron(String dronId, int targetX, int targetY) {
+    /**
+     * Procesa el movimiento de un dron.
+     * No devuelve nada si tiene éxito.
+     * @throws ReglaJuegoException si el movimiento no es válido por cualquier motivo.
+     */
+    public void procesarMoverDron(String dronId, int targetX, int targetY) throws ReglaJuegoException {
+        System.out.println("--- PROCESANDO MOVIMIENTO DE DRON ---");
+        System.out.println("Buscando dron con ID: '" + dronId + "'");
         Unidad unidad = partidaActual.buscarUnidadPorId(dronId);
-        if (unidad == null || !(unidad instanceof Dron)) {
-            return false;
+
+        if (unidad == null) {
+            throw new ReglaJuegoException("No se encontró ninguna unidad con el ID: " + dronId);
         }
+        if (!(unidad instanceof Dron)) {
+            throw new ReglaJuegoException("La unidad con ID " + dronId + " no es un Dron, es un " + unidad.getClass().getSimpleName());
+        }
+        System.out.println("Dron encontrado con éxito.");
 
         Dron dron = (Dron) unidad;
         Posicion origen = dron.getPosicion();
         Posicion destino = new Posicion(targetX, targetY);
 
-        if (!ReglasJuego.ValidarMovimiento(dron, origen, destino, partidaActual.getTablero())) {
-            return false;
+        System.out.println("Validando movimiento desde (" + origen.getX() + "," + origen.getY() + ") hasta (" + destino.getX() + "," + destino.getY() + ")");
+        boolean esMovimientoValido = ReglasJuego.ValidarMovimiento(dron, origen, destino, partidaActual.getTablero());
+
+        if (!esMovimientoValido) {
+            throw new ReglaJuegoException("El movimiento fue invalidado por ReglasJuego.ValidarMovimiento.");
         }
+        System.out.println("Movimiento validado por las reglas.");
 
         partidaActual.getTablero().moverUnidad(dron, origen, destino);
         dron.setPosicion(destino);
         dron.ConsumirPunto();
-        return true;
+        System.out.println("--- MOVIMIENTO DE DRON COMPLETADO ---");
     }
 
-    public boolean procesarMoverPortaDrones(String portaDronesId, int targetX, int targetY) {
+    /**
+     * Procesa el movimiento de un porta-drones.
+     * No devuelve nada si tiene éxito.
+     * @throws ReglaJuegoException si el movimiento no es válido.
+     */
+    public void procesarMoverPortaDrones(String portaDronesId, int targetX, int targetY) throws ReglaJuegoException {
         Unidad unidad = partidaActual.buscarUnidadPorId(portaDronesId);
         if (unidad == null || !(unidad instanceof PortaDrones)) {
-            return false;
+            throw new ReglaJuegoException("No se encontró el PortaDrones con ID: " + portaDronesId);
         }
 
         PortaDrones pd = (PortaDrones) unidad;
@@ -47,13 +69,12 @@ public class MotorJuego {
         Posicion destino = new Posicion(targetX, targetY);
 
         if (!ReglasJuego.ValidarMovimiento(pd, origen, destino, partidaActual.getTablero())) {
-            return false;
+            throw new ReglaJuegoException("Movimiento de PortaDrones invalidado por las reglas.");
         }
 
         partidaActual.getTablero().moverUnidad(pd, origen, destino);
         pd.setPosicion(destino);
         pd.ConsumirPunto();
-        return true;
     }
 
     public void CambiarTurno() {
