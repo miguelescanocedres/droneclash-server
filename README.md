@@ -1,134 +1,150 @@
-# Drone Clash - Backend Server
+# Drone Clash - Servidor Backend
 
-Este proyecto contiene el código fuente del servidor backend para "Drone Clash", un juego multijugador por turnos. Está desarrollado en Java utilizando el framework Spring Boot y se comunica con los clientes de juego a través de WebSockets.
+Bienvenido al repositorio del servidor para el juego por turnos "Drone Clash". Este documento sirve como guía completa para entender la arquitectura, las decisiones de diseño y el funcionamiento del proyecto.
 
 ## Stack Tecnológico
 
-- **Lenguaje**: Java 17
+- **Lenguaje**: Java 17+
 - **Framework**: Spring Boot 3.x
-- **Comunicación**: Spring WebSocket
-- **Serialización**: Jackson (para JSON)
+- **API**: REST con comunicación vía JSON
+- **Servidor Web**: Tomcat (embebido por Spring Boot)
 - **Gestor de Dependencias y Construcción**: Maven
 
 ---
 
-## Conceptos Clave: Maven y el `pom.xml`
+## Arquitectura y Decisiones de Diseño
 
-### ¿Qué es Maven?
+### ¿Por qué una API REST en lugar de WebSockets?
 
-Maven es una herramienta de **automatización de la compilación y gestión de proyectos** para Java. Piensa en él como el "jefe de taller" de tu proyecto. Sus tareas principales son:
+Aunque inicialmente se consideró usar WebSockets, se tomó la decisión estratégica de migrar a una **API REST** por las siguientes razones, especialmente relevantes en un contexto académico y para un juego por turnos:
 
-1.  **Gestión de Dependencias**: Lee la lista de "ingredientes" (librerías externas) que necesitas desde el `pom.xml` y las descarga automáticamente de internet. También descarga las dependencias de esas dependencias, ahorrando un enorme trabajo manual.
-2.  **Ciclo de Vida de Construcción**: Define un proceso estándar para compilar, probar y empaquetar el proyecto. Esto asegura que el proyecto se construya de forma consistente en cualquier máquina.
-3.  **Estandarización**: Fomenta una estructura de directorios estándar (`src/main/java`, `src/test/java`), lo que facilita la navegación y comprensión de cualquier proyecto que use Maven.
+1.  **Simplicidad y Claridad**: El modelo de petición-respuesta (Request-Response) de una API REST es mucho más sencillo de entender y depurar que el flujo de mensajes persistente de WebSockets. El cliente pide algo (`GET /estado`) o envía algo (`POST /accion`), y recibe una respuesta directa.
+2.  **Adecuado para Juegos por Turnos**: La necesidad de comunicación en tiempo real de WebSockets es crítica para juegos de acción (shooters, etc.), pero es excesiva para un juego por turnos. En nuestro caso, el estado del juego solo cambia cuando un jugador completa una acción, por lo que un modelo de "consultar estado tras la acción" es perfectamente válido y más robusto.
+3.  **Facilidad de Prueba**: Los endpoints de una API REST son muy fáciles de probar con herramientas estándar como Postman, Insomnia o incluso un simple `curl`, sin necesidad de un cliente de juego funcional.
+4.  **Evidencia de Diseño Propio**: Una API REST bien estructurada es un pilar de la ingeniería de software moderna. Su diseño y implementación son más fáciles de explicar y justificar como un trabajo de arquitectura propio, mientras que una implementación compleja de WebSockets podría ser percibida de otra manera en un entorno académico.
 
-### ¿Qué es el `pom.xml`?
+### ¿Por qué Spring Boot?
 
-El archivo `pom.xml` (Project Object Model) es el **cerebro del proyecto Maven**. Es un archivo de configuración que le dice a Maven todo lo que necesita saber:
+Spring Boot fue elegido como framework por su capacidad para acelerar el desarrollo y por ser un estándar en la industria:
 
-- **Identificación**: Define el nombre, grupo y versión del proyecto.
-- **Dependencias**: Contiene la lista de todas las librerías externas que el proyecto necesita para funcionar (por ejemplo, Spring Boot, WebSocket, etc.).
-- **Instrucciones de Construcción (Build)**: Especifica cómo debe empaquetarse la aplicación, por ejemplo, en un archivo `.jar` ejecutable que incluye todas sus dependencias.
-
-En resumen, tú declaras **qué** necesitas en el `pom.xml`, y Maven se encarga de **cómo** obtenerlo y construirlo.
+- **Autoconfiguración**: Reduce al mínimo la configuración manual.
+- **Servidor Integrado**: No requiere instalar y configurar un servidor web por separado; Tomcat viene incluido y se ejecuta con un solo clic.
+- **Gestión de Dependencias**: Se integra perfectamente con Maven para manejar todas las librerías necesarias.
+- **Ecosistema Robusto**: Proporciona soluciones probadas para casi cualquier problema (seguridad, acceso a datos, etc.) si el proyecto crece en el futuro.
 
 ---
 
 ## Estructura del Proyecto
 
-```
-.
-├── pom.xml
-└── src
-    └── main
-        └── java
-            └── com
-                └── example
-                    └── droneclashserver
-                        ├── config/
-                        ├── handler/
-                        ├── model/
-                        ├── service/
-                        └── DroneClashServerApplication.java
-```
+El proyecto está organizado en paquetes con responsabilidades bien definidas para mantener el código limpio y escalable.
 
-### Archivos y Paquetes Principales
+-   **`org.example`**:
+    -   `Main.java`: **Punto de Entrada**. Es la clase que arranca toda la aplicación Spring Boot. Su anotación `@ComponentScan` es crucial, ya que le dice a Spring que busque componentes en todos los demás paquetes.
 
-- **`pom.xml`**: El corazón de la configuración del proyecto Maven, como se describió anteriormente.
+-   **`LogicaNegocio`**: **El Cerebro del Juego**. Este paquete contiene la lógica pura del juego y no sabe nada sobre APIs o internet.
+    -   `Clases/ControlJuego/`: Contiene las clases que dirigen el juego (`MotorJuego`, `Partida`, `ReglasJuego`).
+    -   `Clases/ObjetosJuego/`: Contiene las representaciones de las piezas del juego (`Unidad`, `Dron`, `PortaDrones`).
+    -   `Excepciones/`: Contiene las excepciones personalizadas (`ReglaJuegoException`) que comunican errores de lógica de forma clara.
 
-- **`DroneClashServerApplication.java`**: Es el punto de entrada de la aplicación. La anotación `@SpringBootApplication` se encarga de auto-configurar el proyecto, y el método `main` inicia el servidor web Tomcat embebido y toda la aplicación Spring.
+-   **`ConexionServCli`**: **La Capa de Comunicación**. Define cómo se comunica el servidor con el mundo exterior.
+    -   `DTO/`: (Data Transfer Objects). Contiene las clases "tontas" (`EstadoJuego`, `DatosDrone`, etc.) que definen la estructura del JSON que se envía y recibe del cliente. Son el "idioma" compartido.
+    -   `Conexion/`: Contiene las clases que manejan directamente las peticiones web. Aquí vivirá nuestro `ControladorJuego`.
 
-- **`config/`**: Este paquete contiene clases de configuración de Spring.
-    - **`WebSocketConfig.java`**: Configura el endpoint de WebSocket. Registra el `GameHandler` para que escuche las conexiones en la ruta `/game` y permite conexiones desde cualquier origen (`.setAllowedOrigins("*")`).
-    - **`AppConfig.java`**: Define "Beans" adicionales que pueden ser inyectados en otras partes de la aplicación. Aquí se define el `ObjectMapper`, que es la herramienta estándar para convertir objetos Java a JSON y viceversa.
+-   **`ServJuego`**: **El Puente / Traductor**.
+    -   `ServicioJuego.java`: Es la pieza que conecta la `LogicaNegocio` con la `ConexionServCli`. Su responsabilidad es:
+        1.  Recibir órdenes del `ControladorJuego`.
+        2.  Llamar al `MotorJuego` para que ejecute la lógica.
+        3.  "Traducir" los objetos complejos de la `LogicaNegocio` (como `Partida`) a los DTOs simples (como `EstadoJuego`) que el cliente entiende.
 
-- **`model/`**: Contiene los POJOs (Plain Old Java Objects), que son las clases que representan los datos del juego. Su estructura está diseñada para coincidir exactamente con las interfaces TypeScript del cliente para asegurar una comunicación sin errores.
-    - `GameState.java`: Representa el estado completo del juego en un momento dado (turno, unidades, etc.).
-    - `GameAction.java`: Representa una acción enviada por un cliente (mover un dron, pasar de turno, etc.).
-    - `PortaDroneData.java` y `DroneData.java`: Representan las propiedades de las unidades individuales.
+---
+COMO FUNCIONAN LOS DTO
 
-- **`service/`**: Contiene la lógica de negocio principal de la aplicación (el "cerebro" del juego).
-    - **`GameService.java`**: Es un Singleton (`@Service`) que mantiene el estado actual del juego (`GameState`) en memoria. Se encarga de inicializar el tablero y procesar las acciones que le llegan desde el `GameHandler` para modificar el estado del juego.
+Aquí te explico el rol de cada uno y por qué son indispensables:
+•
+AccionJuego.java:
+◦
+Rol: Representa una orden que envía el cliente al servidor.
+◦
+Uso: Es el parámetro de entrada del método procesarAccion. Es fundamental para recibir las acciones del jugador.
+•
+EstadoJuego.java:
+◦
+Rol: Es el objeto "contenedor" principal que recibe el cliente. Contiene toda la información necesaria para dibujar el estado completo del juego.
+◦
+Uso: Es el objeto que ServicioJuego construye y que el ControladorJuego envía como respuesta.
+•
+DatosDrone.java y DatosPortaDron.java:
+◦
+Rol: Representan las "fichas técnicas" de las unidades individuales.
+◦
+Uso: EstadoJuego contiene listas de estos objetos (List<DatosDrone>). No puedes tener un EstadoJuego sin ellos. ServicioJuego los crea en el bucle for para rellenar esas listas.
+•
+DatosTablero.java y DatosCelda.java:
+◦
+Rol: Representan la estructura del tablero y qué celdas están ocupadas.
+◦
+Uso: EstadoJuego contiene un objeto DatosTablero. A su vez, DatosTablero contiene una lista de DatosCelda. Son necesarios para que el cliente sepa dónde están las unidades sin tener que recalcularlo.
+En resumen:
+Tu EstadoJuego es como una muñeca rusa. Para construirlo, necesitas todas las piezas:
+•
+EstadoJuego contiene...
+◦
+una lista de DatosDrone.
+◦
+una lista de DatosPortaDron.
+◦
+un objeto DatosTablero, que a su vez contiene...
+▪
+una lista de DatosCelda.
+Y para recibir órdenes, necesitas AccionJuego.
 
-- **`handler/`**: Contiene las clases que manejan directamente la comunicación por WebSocket.
-    - **`GameHandler.java`**: Es la clase más importante para la comunicación.
-        1.  Gestiona el ciclo de vida de la conexión (`afterConnectionEstablished`, `afterConnectionClosed`).
-        2.  Recibe los mensajes de texto (JSON) de los clientes (`handleTextMessage`).
-        3.  Utiliza el `ObjectMapper` para deserializar los mensajes a objetos `GameAction`.
-        4.  Pasa las acciones al `GameService` para que sean procesadas.
-        5.  Recibe el estado actualizado del `GameService` y lo difunde (broadcast) a todos los clientes conectados.
+## Flujo de una Acción: "Mover un Dron"
+
+Para entender cómo se conectan las piezas, sigamos el viaje de una acción:
+
+1.  **Cliente (Frontend)**: El jugador hace clic. El cliente envía una petición `POST` a la URL `/api/juego/accion` con un cuerpo JSON: `{ "accion": "moverDron", ... }`.
+
+2.  **`ControladorJuego` (Capa de Conexión)**: Recibe la petición HTTP. Deserializa el JSON a un objeto `AccionJuego` y llama al método `servicioJuego.procesarAccion(accion)`.
+
+3.  **`ServicioJuego` (Capa de Traducción)**: Recibe el objeto `AccionJuego`. Llama al método `motorJuego.procesarMoverDron(...)` dentro de un bloque `try-catch`.
+
+4.  **`MotorJuego` (Cerebro)**:
+    -   Busca la unidad por su ID. Si no la encuentra, lanza una `ReglaJuegoException`.
+    -   Consulta a `ReglasJuego.ValidarMovimiento()`. Si las reglas no lo permiten, lanza una `ReglaJuegoException`.
+    -   Si todo es válido, actualiza la posición del `Dron` y el `Tablero` en el objeto `Partida`.
+
+5.  **Captura del Resultado**:
+    -   **Si hubo éxito**: La llamada en `ServicioJuego` termina sin errores.
+    -   **Si hubo un fallo**: El `ServicioJuego` (o el `ControladorJuego`) captura la `ReglaJuegoException` y extrae el mensaje de error específico.
+
+6.  **Respuesta al Cliente**:
+    -   **En caso de éxito**: El `ControladorJuego` pide el estado actualizado a `ServicioJuego` (que lo traduce de `Partida` a `EstadoJuego`), lo serializa a JSON y lo devuelve al cliente con un código **200 OK**.
+    -   **En caso de fallo**: El `ControladorJuego` devuelve el mensaje de la excepción con un código de error, por ejemplo, **400 Bad Request**.
+
+7.  **Cliente (Frontend)**: Recibe la respuesta. Si es un 200 OK, actualiza la pantalla con el nuevo estado del juego. Si es un error, puede mostrar un mensaje al usuario.
 
 ---
 
-## Cómo Funciona la Conexión con el Cliente
+## Endpoints de la API (Contrato con el Cliente)
 
-La comunicación entre el cliente (Phaser) y el servidor (Spring Boot) sigue un flujo claro y basado en eventos:
+-   ### Obtener Estado del Juego
+    -   **URL**: `/api/juego/estado`
+    -   **Método**: `GET`
+    -   **Respuesta Exitosa (200 OK)**: Un objeto JSON con la estructura de `EstadoJuego`.
 
-1.  **Conexión Inicial**:
-    - El cliente de Phaser ejecuta `new WebSocket('ws://localhost:8080/game')`.
-    - En el servidor, `WebSocketConfig` dirige esta petición al `GameHandler`.
-    - El método `afterConnectionEstablished` del `GameHandler` se dispara.
-
-2.  **Envío del Estado Inicial**:
-    - Inmediatamente después de la conexión, el `GameHandler` llama al `GameService` para obtener el `GameState` actual.
-    - Serializa este objeto `GameState` a una cadena de texto JSON.
-    - Envía este JSON al cliente recién conectado.
-    - El cliente recibe el JSON, lo parsea y renderiza las unidades (drones y porta-drones) en la pantalla.
-
-3.  **El Cliente Envía una Acción**:
-    - El jugador hace clic en el mapa.
-    - El cliente de Phaser crea un objeto `GameAction` (por ejemplo, `{ action: 'moveDrone', ... }`).
-    - Serializa este objeto a JSON y lo envía a través del WebSocket.
-
-4.  **El Servidor Procesa la Acción**:
-    - El método `handleTextMessage` del `GameHandler` se dispara.
-    - Deserializa el JSON recibido a un objeto `GameAction`.
-    - Llama a `gameService.processAction(action)`, pasando la acción al cerebro del juego.
-    - El `GameService` actualiza su `GameState` interno según la lógica de la acción.
-
-5.  **Difusión del Nuevo Estado (Broadcast)**:
-    - El `GameHandler` toma el `GameState` actualizado del `GameService`.
-    - Lo serializa a JSON.
-    - Recorre la lista de todas las sesiones de WebSocket activas y envía el nuevo estado a **cada una de ellas**.
-
-6.  **Sincronización de Clientes**:
-    - Todos los clientes (incluido el que originó la acción) reciben el nuevo `GameState`.
-    - Actualizan sus pantallas para reflejar el nuevo estado del juego, asegurando que todos los jugadores vean lo mismo.
+-   ### Enviar una Acción
+    -   **URL**: `/api/juego/accion`
+    -   **Método**: `POST`
+    -   **Cuerpo de la Petición**: Un objeto JSON con la estructura de `AccionJuego`.
+    -   **Respuesta Exitosa (200 OK)**: Un objeto JSON con el nuevo `EstadoJuego` tras la acción.
+    -   **Respuesta de Error (400 Bad Request)**: Un texto con el mensaje específico del error (ej: "No se encontró la unidad con el ID: ...").
 
 ---
 
-## Cómo Ejecutar el Proyecto
+## Cómo Ejecutar el Servidor
 
-### Backend (Servidor Java)
-
-1.  Abre el proyecto en tu IDE (IntelliJ, Eclipse, etc.).
-2.  Asegúrate de que el IDE ha sincronizado las dependencias de Maven (si no, fuerza una recarga/reimportación del `pom.xml`).
-3.  Busca y ejecuta la clase `DroneClashServerApplication.java`.
-4.  El servidor estará corriendo en `localhost:8080`.
-
-### Frontend (Cliente Phaser)
-
-1.  Abre la carpeta del proyecto frontend en VS Code.
-2.  Abre una terminal y ejecuta `npm install` para descargar las dependencias (solo la primera vez).
-3.  Ejecuta `npm run dev`.
-4.  Abre tu navegador y ve a la dirección que indica la terminal (normalmente `http://localhost:5173`).
+1.  Abre el proyecto en tu IDE (IntelliJ IDEA es recomendado).
+2.  Asegúrate de que el IDE ha importado el proyecto como un proyecto de Maven (a través del `pom.xml`).
+3.  Busca el archivo `Main.java` en el paquete `org.example`.
+4.  Haz clic derecho sobre el archivo y selecciona **`Run 'Main.main()'`**.
+5.  El servidor se iniciará y estará escuchando en `http://localhost:8080`.
