@@ -2,30 +2,46 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <!-- HERENCIA DE SPRING BOOT -->
+    <!-- Esta sección hace que nuestro proyecto herede configuraciones por defecto de Spring Boot. -->
+    <!-- Gestiona las versiones de las dependencias y proporciona configuraciones sensatas. -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
+    <!-- IDENTIFICACIÓN DEL PROYECTO -->
+    <!-- Coordenadas Maven que identifican de forma única este proyecto. -->
     <groupId>com.example</groupId>
     <artifactId>droneclashserver</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>droneclashserver</name>
     <description>Drone Clash Server</description>
+
+    <!-- PROPIEDADES DEL PROYECTO -->
+    <!-- Aquí se definen variables de configuración, como la versión de Java a utilizar. -->
     <properties>
         <java.version>17</java.version>
     </properties>
+
+    <!-- DEPENDENCIAS -->
+    <!-- Esta es la lista de librerías externas que necesita nuestro proyecto. -->
     <dependencies>
+        <!-- Dependencia para crear aplicaciones web, incluye un servidor Tomcat embebido. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- Dependencia para habilitar la comunicación por WebSockets. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
 
+        <!-- Dependencia para las pruebas unitarias y de integración. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -33,8 +49,11 @@
         </dependency>
     </dependencies>
 
+    <!-- INSTRUCCIONES DE CONSTRUCCIÓN (BUILD) -->
+    <!-- Define cómo se debe compilar y empaquetar el proyecto. -->
     <build>
         <plugins>
+            <!-- Plugin de Spring Boot que empaqueta la aplicación en un único JAR ejecutable. -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
