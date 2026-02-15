@@ -27,16 +27,23 @@ public class ServicioJuego {
         Partida partida = motorJuego.getPartidaActual();
 
         Jugador jugadorA = new Jugador("playerA", "Player A");
+        Jugador jugadorB = new Jugador("playerB", "Player B");
+        Posicion posDronA = new Posicion(7, 7);
+        DronAereo dronA = new DronAereo(posDronA, jugadorA);
+        partida.getTablero().colocarUnidad(dronA, posDronA);
+        partida.registrarUnidad(dronA);
+
+        Posicion posDronB = new Posicion(7, 10);
+        DronNaval dronB = new DronNaval(posDronB, jugadorB);
+        partida.getTablero().colocarUnidad(dronB, posDronB);
+        partida.registrarUnidad(dronB);
 
         Posicion posPorta = new Posicion(5, 5);
         PortaDronesAereo porta = new PortaDronesAereo(posPorta, jugadorA);
         partida.getTablero().colocarUnidad(porta, posPorta);
         partida.registrarUnidad(porta);
 
-        Posicion posDron = new Posicion(7, 7);
-        DronAereo dron = new DronAereo(posDron, jugadorA);
-        partida.getTablero().colocarUnidad(dron, posDron);
-        partida.registrarUnidad(dron);
+
     }
 
 
