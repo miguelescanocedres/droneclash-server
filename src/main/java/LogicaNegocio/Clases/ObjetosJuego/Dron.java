@@ -14,6 +14,13 @@ public abstract class Dron extends Unidad {
         combustibleActual = combustibleMaximo;
     }
 
+    public void ConsumirMunicion() {
+        if (municion > 0) {
+            municion--;
+        }
+    }
+
+
     public TipoArma getTipoArma() { return tipoArma; }
     public int getMunicion() { return municion; }
 }

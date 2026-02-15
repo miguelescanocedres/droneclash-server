@@ -15,6 +15,7 @@ public class Partida {
     private TipoEquipo turnoActual;
     private Map<String, Unidad> unidadesPorId;
     private int turno;
+    private RelojJuego reloj;
 
     public Partida() {
         this.tablero = new Tablero();
@@ -22,6 +23,7 @@ public class Partida {
         this.jugadoresAzules = new LinkedList<>();
         this.unidadesPorId = new HashMap<>();
         this.turno = 1;
+        this.reloj = new RelojJuego();
     }
 
     public void registrarUnidad(Unidad unidad) {
@@ -37,10 +39,21 @@ public class Partida {
     public int getTurno() { return turno; }
     public void setTurno(int turno) { this.turno = turno; }
     public TipoEquipo getTurnoActual() { return turnoActual; }
+    public RelojJuego getReloj() { return reloj; }
+
 
     public void iniciarPartida() {
     }
 
-    public void DistribuirUnidades() {
+
+    public void eliminarUnidad(Unidad unidad) {
+        if (unidad != null) {
+            unidadesPorId.remove(unidad.getId());
+        }
     }
+
+    public void setTurnoActual(TipoEquipo turnoActual) { this.turnoActual = turnoActual; }
+
+
+
 }

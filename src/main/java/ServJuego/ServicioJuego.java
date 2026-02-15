@@ -27,16 +27,23 @@ public class ServicioJuego {
         Partida partida = motorJuego.getPartidaActual();
 
         Jugador jugadorA = new Jugador("playerA", "Player A");
+        Jugador jugadorB = new Jugador("playerB", "Player B");
+        Posicion posDronA = new Posicion(7, 7);
+        DronAereo dronA = new DronAereo(posDronA, jugadorA);
+        partida.getTablero().colocarUnidad(dronA, posDronA);
+        partida.registrarUnidad(dronA);
+
+        Posicion posDronB = new Posicion(7, 10);
+        DronNaval dronB = new DronNaval(posDronB, jugadorB);
+        partida.getTablero().colocarUnidad(dronB, posDronB);
+        partida.registrarUnidad(dronB);
 
         Posicion posPorta = new Posicion(5, 5);
         PortaDronesAereo porta = new PortaDronesAereo(posPorta, jugadorA);
         partida.getTablero().colocarUnidad(porta, posPorta);
         partida.registrarUnidad(porta);
 
-        Posicion posDron = new Posicion(7, 7);
-        DronAereo dron = new DronAereo(posDron, jugadorA);
-        partida.getTablero().colocarUnidad(dron, posDron);
-        partida.registrarUnidad(dron);
+
     }
 
 
@@ -49,7 +56,7 @@ public class ServicioJuego {
                         accion.getObjetivoX(),
                         accion.getObjetivoY()
                 );
-                System.out.println("INFO: Acción 'moverDron' procesada con éxito.");
+                System.out.println("INFO: Acción 'moverDron' prxocesada con éxito.");
                 break;
 
             case "moverPortaDron":
@@ -60,6 +67,14 @@ public class ServicioJuego {
                 );
                 System.out.println("INFO: Acción 'moverPortaDron' procesada con éxito.");
                 break;
+
+            case "dispararDron":
+                motorJuego.procesarDispararDron(
+                        accion.getIdDron(),
+                        accion.getObjetivoX(),
+                        accion.getObjetivoY());
+                break;
+
 
             default:
                 // Si la acción no es conocida, también podemos lanzar una excepción.
@@ -79,6 +94,7 @@ public class ServicioJuego {
         Partida partidaActual = motorJuego.getPartidaActual();
 
         estadoJuegoDTO.setTurno(partidaActual.getTurno());
+        estadoJuegoDTO.setTiempoRestante(partidaActual.getReloj().getTiempoRestante());
         estadoJuegoDTO.setEstadoPartida("playing");
         estadoJuegoDTO.setGanador(null);
 
