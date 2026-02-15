@@ -79,6 +79,7 @@ public class ServicioJuego {
         Partida partidaActual = motorJuego.getPartidaActual();
 
         estadoJuegoDTO.setTurno(partidaActual.getTurno());
+        estadoJuegoDTO.setTiempoRestante(partidaActual.getReloj().getTiempoRestante());
         estadoJuegoDTO.setEstadoPartida("playing");
         estadoJuegoDTO.setGanador(null);
 

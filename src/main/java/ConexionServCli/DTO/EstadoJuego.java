@@ -14,6 +14,9 @@ public class EstadoJuego {
     private List<DatosPortaDron> portaDrones;
     private List<DatosDrone> drones;
     private DatosTablero tablero;
+    private int tiempoRestante;
+
+
 
 
     public int getTurno() {
@@ -70,5 +73,13 @@ public class EstadoJuego {
 
     public void setTablero(DatosTablero tablero) {
         this.tablero = tablero;
+    }
+
+    public int getTiempoRestante() {
+        return tiempoRestante;
+    }
+
+    public void setTiempoRestante(int tiempoRestante) {
+        this.tiempoRestante = tiempoRestante;
     }
 }

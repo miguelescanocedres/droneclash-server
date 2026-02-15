@@ -5,12 +5,18 @@ import LogicaNegocio.Clases.ObjetosJuego.Dron;
 import LogicaNegocio.Clases.ObjetosJuego.PortaDrones;
 import LogicaNegocio.Clases.ObjetosJuego.Unidad;
 import LogicaNegocio.Excepciones.ReglaJuegoException;
+import LogicaNegocio.Enums.TipoEquipo;
+
 
 public class MotorJuego {
     private Partida partidaActual;
 
     public MotorJuego() {
         this.partidaActual = new Partida();
+        // Cuando el reloj llega a 0, cambia el turno automáticamente
+        this.partidaActual.getReloj().setAlAgotarse(this::CambiarTurno);
+
+
     }
 
     public Partida getPartidaActual() {
@@ -78,7 +84,19 @@ public class MotorJuego {
     }
 
     public void CambiarTurno() {
+        Partida partida = this.partidaActual;
+        // Alterna entre equipos
+        if (partida.getTurnoActual() == TipoEquipo.ROJO_AEREO) {
+            partida.setTurnoActual(TipoEquipo.AZUL_NAVAL);
+        } else {
+            partida.setTurnoActual(TipoEquipo.ROJO_AEREO);
+        }
+        partida.setTurno(partida.getTurno() + 1);
+        // Reinicia el reloj para el nuevo turno
+        partida.getReloj().reiniciar();
+        System.out.println("--- TURNO CAMBIADO: Turno " + partida.getTurno() + " - Equipo: " + partida.getTurnoActual() + " ---");
     }
+
 
     public void EvaluarVictoria() {
     }
