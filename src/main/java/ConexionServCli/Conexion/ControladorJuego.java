@@ -22,7 +22,7 @@ public class ControladorJuego {
             return ServicioJuego.obtenerEstadoJuego();
         }
 
-        // SET, el front envia la accion de juego y este la valida
+        // POD, el front envia la accion de juego y este la valida
         @PostMapping("/accion")
         public ResponseEntity<?> recibirAccion(@RequestBody AccionJuego accion) {
             System.out.println("Procesando acción: " + accion.getAccion());
@@ -30,18 +30,19 @@ public class ControladorJuego {
             try {
 
                 //    Si tiene éxito, devuelve el nuevo estado.
-                EstadoJuego nuevoEstado = ServicioJuego.procesarAccion(accion); // Asumiendo que servicioJuego está inyectado
+                EstadoJuego nuevoEstado = ServicioJuego.procesarAccion(accion);
 
                 // Devolvemos el estado con un código  OK.
                 return ResponseEntity.ok(nuevoEstado);
 
             } catch (ReglaJuegoException e) {
                 // Si servidor no valida la accion, aca atrapa el error y lo lanza
-
-                //Error 400 Bad Request.
-
+                //Error
                 return ResponseEntity.badRequest().body(e.getMessage());
+                }
             }
-        }
+
+
+
         }
 

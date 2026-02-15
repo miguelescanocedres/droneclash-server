@@ -41,6 +41,10 @@ public class Partida {
     public void iniciarPartida() {
     }
 
-    public void DistribuirUnidades() {
+
+    public void eliminarUnidad(Unidad unidad) {
+        if (unidad != null) {
+            unidadesPorId.remove(unidad.getId());
+        }
     }
 }

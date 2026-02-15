@@ -2,14 +2,13 @@ package ConexionServCli.DTO;
 
 import java.util.List;
 
-/**
- * DTO que representa el estado completo del juego para el cliente.
- * Los nombres de los campos están en español para coincidir con el contrato del cliente.
- */
+
+ // DTO que representa el estado completo del juego para el cliente.
+
 public class EstadoJuego {
     private int turno;
     private String idUnidadActiva;
-    private String estadoPartida; // "waiting" | "playing" | "finished"
+    private String estadoPartida;
     private String ganador;
     private List<DatosPortaDron> portaDrones;
     private List<DatosDrone> drones;

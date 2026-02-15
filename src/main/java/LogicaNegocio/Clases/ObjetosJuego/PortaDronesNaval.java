@@ -4,9 +4,9 @@ import LogicaNegocio.Clases.ClasesAuxiliares.Posicion;
 
 import java.util.LinkedList;
 
-public class PortaDronesAcuatico extends PortaDrones{
-    private LinkedList<DronAcuatico> drones;
-    public PortaDronesAcuatico(Posicion posicion, Jugador propietario) {
+public class PortaDronesNaval extends PortaDrones{
+    private LinkedList<DronNaval> drones;
+    public PortaDronesNaval(Posicion posicion, Jugador propietario) {
         super(posicion, propietario);
         vida = 3;
     }

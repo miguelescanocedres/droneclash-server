@@ -49,7 +49,7 @@ public class ServicioJuego {
                         accion.getObjetivoX(),
                         accion.getObjetivoY()
                 );
-                System.out.println("INFO: Acción 'moverDron' procesada con éxito.");
+                System.out.println("INFO: Acción 'moverDron' prxocesada con éxito.");
                 break;
 
             case "moverPortaDron":
@@ -60,6 +60,14 @@ public class ServicioJuego {
                 );
                 System.out.println("INFO: Acción 'moverPortaDron' procesada con éxito.");
                 break;
+
+            case "dispararDron":
+                motorJuego.procesarDispararDron(
+                        accion.getIdDron(),
+                        accion.getObjetivoX(),
+                        accion.getObjetivoY());
+                break;
+
 
             default:
                 // Si la acción no es conocida, también podemos lanzar una excepción.

@@ -20,6 +20,9 @@ public abstract class PortaDrones extends Unidad {
             estado = EstadoUnidad.DESTRUIDO;
         }
     }
+    public void reducirVida(){
+        vida--;
+    }
 
     public boolean EstaDestruido() {
         return estado == EstadoUnidad.DESTRUIDO;

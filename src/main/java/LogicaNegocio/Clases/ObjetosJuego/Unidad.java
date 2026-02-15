@@ -2,7 +2,6 @@ package LogicaNegocio.Clases.ObjetosJuego;
 
 import LogicaNegocio.Clases.ClasesAuxiliares.Posicion;
 import LogicaNegocio.Enums.EstadoUnidad;
-import LogicaNegocio.Enums.TipoEquipo;
 
 import java.util.UUID;
 
@@ -12,7 +11,7 @@ public abstract class Unidad {
     protected Jugador propietario;
     protected EstadoUnidad estado;
     protected int visionRango;
-    protected int combustibleMaximo;// El maximo y recarga por turno, no cambia segun el tipo de unidad? Yo lo definira en las clases hijos, idem vision pero eso ya se definio
+    protected int combustibleMaximo;
     protected int combustibleActual;
     protected int recargaPorTurno;
 
@@ -26,11 +25,12 @@ public abstract class Unidad {
         combustibleActual = Math.min(combustibleActual + recargaPorTurno, combustibleMaximo);
     }
 
-    public void ConsumirPunto() {
+    public void ConsumirCombustible() {
         if (combustibleActual > 0) {
             combustibleActual--;
         }
     }
+
 
     public boolean TieneEnergia() {
         return combustibleActual > 0;

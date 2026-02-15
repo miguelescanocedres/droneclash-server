@@ -4,7 +4,7 @@ import LogicaNegocio.Clases.ClasesAuxiliares.Posicion;
 import LogicaNegocio.Clases.ControlJuego.ReglasJuego;
 import LogicaNegocio.Enums.TipoArma;
 
-public class DronAereo extends Dron{
+public class DronAereo extends Dron {
 
     public DronAereo(Posicion posicion, Jugador propietario) {
         super(posicion, propietario);
@@ -12,4 +12,7 @@ public class DronAereo extends Dron{
         municion = 1;
         visionRango = ReglasJuego.VisionBase;
     }
+
+
+
 }
