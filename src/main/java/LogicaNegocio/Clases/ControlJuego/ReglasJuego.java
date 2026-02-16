@@ -108,6 +108,12 @@ public class ReglasJuego {
 
 
     public static void AplicarImpacto(Dron atacante, Unidad objetivo, Partida partida) {
+
+        if (objetivo == null) {
+            System.out.println("Disparo a casilla vacia");
+            return;
+        }
+
         if (atacante.getPropietario().equals(objetivo.getPropietario())) {
             System.out.println("Intento de ataque a una unidad aliada");
             return;
