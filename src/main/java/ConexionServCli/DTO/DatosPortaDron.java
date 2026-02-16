@@ -8,6 +8,7 @@ public class DatosPortaDron {
     private String id;
     private String equipo;
     private String tipo; // "aereo" | "naval"
+    private String idJugador; // jugador que lo controla
     private int x;
     private int y;
     private int vida;

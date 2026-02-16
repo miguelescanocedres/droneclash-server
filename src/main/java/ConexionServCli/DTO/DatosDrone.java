@@ -7,6 +7,7 @@ public class DatosDrone {
     private String id;
     private String equipo; // El equipo al que pertenece
     private String carga; // "bomba" | "misil"
+    private String idJugador; // jugador que lo controla
     private int x;
     private int y;
     private int combustible;
