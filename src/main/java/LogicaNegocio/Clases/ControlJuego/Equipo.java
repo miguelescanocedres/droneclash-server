@@ -3,6 +3,7 @@ package LogicaNegocio.Clases.ControlJuego;
 import LogicaNegocio.Clases.ObjetosJuego.Dron;
 import LogicaNegocio.Clases.ObjetosJuego.Jugador;
 import LogicaNegocio.Clases.ObjetosJuego.PortaDrones;
+import LogicaNegocio.Enums.Rol;
 import LogicaNegocio.Enums.TipoEquipo;
 
 import java.awt.image.Kernel;
@@ -24,4 +25,41 @@ public class Equipo {
     public Jugador ObtenerLider (){
         return new Jugador();
     }
+
+    //No toque las clases del Tino pero creo que no las necesitamos
+
+    public Equipo(TipoEquipo tipoEquipo) {
+        this.tipoEquipo = tipoEquipo;
+        this.jugadores = new LinkedList<>();
+    }
+
+    public void agregarJugador(Jugador jugador) {
+        if (jugadores.isEmpty()) {
+            jugador.setRol(Rol.PORTADRONES);
+        } else {
+            jugador.setRol(Rol.PILOTO_DRON);
+        }
+        jugador.setEquipo(this.tipoEquipo);
+        jugadores.add(jugador);
+    }
+
+    public Jugador obtenerLider() {
+        if (jugadores.isEmpty()) {
+            return null;
+        }
+        return jugadores.getFirst();
+    }
+
+    public boolean tieneJugador(String idJugador) {
+        return jugadores.find(idJugador));
+    }
+
+    public int getCantidadJugadores() {
+        return jugadores.size();
+    }
+
+    public TipoEquipo getTipoEquipo() { return tipoEquipo; }
+    public LinkedList<Jugador> getJugadores() { return jugadores; }
+    public PortaDrones getPortaDrones() { return portaDrones; }
+    public void setPortaDrones(PortaDrones portaDrones) { this.portaDrones = portaDrones; }
 }

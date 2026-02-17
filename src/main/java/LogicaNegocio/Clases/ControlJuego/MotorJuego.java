@@ -5,7 +5,9 @@ import LogicaNegocio.Clases.ObjetosJuego.Dron;
 import LogicaNegocio.Clases.ObjetosJuego.PortaDrones;
 import LogicaNegocio.Clases.ObjetosJuego.Unidad;
 import LogicaNegocio.Excepciones.ReglaJuegoException;
+import LogicaNegocio.Enums.EstadoPartida;
 import LogicaNegocio.Enums.TipoEquipo;
+
 
 
 public class MotorJuego {
@@ -13,19 +15,31 @@ public class MotorJuego {
 
     public MotorJuego() {
         this.partidaActual = new Partida();
-        // Cuando el reloj llega a 0, cambia el turno automáticamente
         this.partidaActual.getReloj().setAlAgotarse(this::CambiarTurno);
-
-
     }
+
 
     public Partida getPartidaActual() {
         return partidaActual;
     }
 
+    public TipoEquipo agregarJugador(String idJugador) throws ReglaJuegoException {
+        return partidaActual.agregarJugador(idJugador);
+    }
+
+    public void iniciarJuego(Posicion posRojo, Posicion posAzul) throws ReglaJuegoException {
+        partidaActual.iniciarPartida(posRojo, posAzul);
+    }
+
+    private void validarPartidaEnCurso() throws ReglaJuegoException {
+        if (partidaActual.getEstado() != EstadoPartida.EN_CURSO) {
+            throw new ReglaJuegoException("No se puede realizar acciones: la partida no esta en curso.");
+        }
+    }
+
 
     public void procesarMoverDron(String dronId, int targetX, int targetY) throws ReglaJuegoException {
-
+        validarPartidaEnCurso();
         Unidad unidad = partidaActual.buscarUnidadPorId(dronId);
 
         if (unidad == null) {
@@ -56,6 +70,7 @@ public class MotorJuego {
 
 
     public void procesarMoverPortaDrones(String portaDronesId, int targetX, int targetY) throws ReglaJuegoException {
+        validarPartidaEnCurso();
         Unidad unidad = partidaActual.buscarUnidadPorId(portaDronesId);
         if (unidad == null || !(unidad instanceof PortaDrones)) {
             throw new ReglaJuegoException("No se encontró el PortaDrones con ID: " + portaDronesId);
@@ -76,6 +91,7 @@ public class MotorJuego {
 
     public void procesarDispararDron (String dronId, int targetX, int targetY) throws  ReglaJuegoException
     {
+        validarPartidaEnCurso();
         Unidad unidadAtacante = partidaActual.buscarUnidadPorId(dronId);
         Dron atacante = (Dron) unidadAtacante;
         Posicion posObjetivo = new Posicion(targetX, targetY);
@@ -96,24 +112,17 @@ public class MotorJuego {
     }
 
 
-
-
-
-
     public void CambiarTurno() {
         Partida partida = this.partidaActual;
-        // Alterna entre equipos
         if (partida.getTurnoActual() == TipoEquipo.ROJO_AEREO) {
             partida.setTurnoActual(TipoEquipo.AZUL_NAVAL);
         } else {
             partida.setTurnoActual(TipoEquipo.ROJO_AEREO);
         }
         partida.setTurno(partida.getTurno() + 1);
-        // Reinicia el reloj para el nuevo turno
         partida.getReloj().reiniciar();
         System.out.println("--- TURNO CAMBIADO: Turno " + partida.getTurno() + " - Equipo: " + partida.getTurnoActual() + " ---");
     }
-
 
     public void EvaluarVictoria() {
     }

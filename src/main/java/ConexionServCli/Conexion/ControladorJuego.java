@@ -1,7 +1,6 @@
 package ConexionServCli.Conexion;
 
-import ConexionServCli.DTO.AccionJuego;
-import ConexionServCli.DTO.EstadoJuego;
+import ConexionServCli.DTO.*;
 import LogicaNegocio.Excepciones.ReglaJuegoException;
 import ServJuego.ServicioJuego;
 import org.springframework.http.ResponseEntity;
@@ -26,15 +25,11 @@ public class ControladorJuego {
         @PostMapping("/accion")
         public ResponseEntity<?> recibirAccion(@RequestBody AccionJuego accion) {
             System.out.println("Procesando acción: " + accion.getAccion());
-
             try {
-
                 //    Si tiene éxito, devuelve el nuevo estado.
                 EstadoJuego nuevoEstado = ServicioJuego.procesarAccion(accion);
-
                 // Devolvemos el estado con un código  OK.
                 return ResponseEntity.ok(nuevoEstado);
-
             } catch (ReglaJuegoException e) {
                 // Si servidor no valida la accion, aca atrapa el error y lo lanza
                 //Error
@@ -42,7 +37,34 @@ public class ControladorJuego {
                 }
             }
 
-
-
+    @PostMapping("/jugador")
+    public ResponseEntity<?> unirseJugador(@RequestBody SolicitudUnirseJugador solicitud) {
+        try {
+            RespuestaUnirseJugador respuesta = ServicioJuego.unirJugador(solicitud);
+            return ResponseEntity.ok(respuesta);
+        } catch (ReglaJuegoException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @PostMapping("/iniciar")
+    public ResponseEntity<?> iniciarPartida(@RequestBody SolicitudIniciarPartida solicitud) {
+        try {
+            EstadoJuego estado = ServicioJuego.iniciarPartida(solicitud);
+            return ResponseEntity.ok(estado);
+        } catch (ReglaJuegoException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+
+
+
+
+}
+
+
+
+
 
