@@ -152,7 +152,10 @@ public class ServicioJuego {
         estadoJuegoDTO.setTurno(partidaActual.getTurno());
         estadoJuegoDTO.setTiempoRestante(partidaActual.getReloj().getTiempoRestante());
         estadoJuegoDTO.setEstadoPartida(partidaActual.getEstado().name());
-        estadoJuegoDTO.setGanador(null);
+
+        TipoEquipo ganador = partidaActual.getGanador();
+        estadoJuegoDTO.setGanador(ganador != null ? ganador.name() : null);
+
 
         List<DatosDrone> dronesDTO = new ArrayList<>();
         List<DatosPortaDron> portaDronesDTO = new ArrayList<>();

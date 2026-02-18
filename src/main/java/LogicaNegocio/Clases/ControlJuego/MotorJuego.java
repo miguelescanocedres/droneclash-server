@@ -10,6 +10,7 @@ import LogicaNegocio.Enums.TipoEquipo;
 
 
 
+
 public class MotorJuego {
     private Partida partidaActual;
 
@@ -108,11 +109,15 @@ public class MotorJuego {
         Unidad unidadObjetivo = partidaActual.getTablero().getCelda(targetX, targetY).getUnidad();
         ReglasJuego.AplicarImpacto(atacante,unidadObjetivo,partidaActual);
 
+        EvaluarVictoria(); // no estoy seguro si va aca pero creo que no hay otro lugar logico
+
 
     }
 
 
     public void CambiarTurno() {
+        if (partidaActual.getEstado() != EstadoPartida.EN_CURSO) return; // si termina la partdia no quiero cambiar turno
+
         Partida partida = this.partidaActual;
         if (partida.getTurnoActual() == TipoEquipo.ROJO_AEREO) {
             partida.setTurnoActual(TipoEquipo.AZUL_NAVAL);
@@ -125,5 +130,25 @@ public class MotorJuego {
     }
 
     public void EvaluarVictoria() {
+        Partida partida = this.partidaActual;
+        if (partida.getEstado() != EstadoPartida.EN_CURSO) return;
+
+        PortaDrones portaRojo = partida.getEquipoRojo().getPortaDrones();
+        PortaDrones portaAzul = partida.getEquipoAzul().getPortaDrones();
+
+        boolean rojoDestruido = portaRojo != null && portaRojo.getVida() <= 0;
+        boolean azulDestruido = portaAzul != null && portaAzul.getVida() <= 0;
+
+        if (rojoDestruido) {
+            partida.setGanador(TipoEquipo.AZUL_NAVAL);
+            partida.setEstado(EstadoPartida.FINALIZADA);
+            partida.getReloj().detener();
+            System.out.println("¡VICTORIA! El equipo AZUL NAVAL ha ganado la partida.");
+        } else if (azulDestruido) {
+            partida.setGanador(TipoEquipo.ROJO_AEREO);
+            partida.setEstado(EstadoPartida.FINALIZADA);
+            partida.getReloj().detener();
+            System.out.println("¡VICTORIA! El equipo ROJO AEREO ha ganado la partida.");
+        }
     }
 }

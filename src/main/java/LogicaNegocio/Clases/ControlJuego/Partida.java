@@ -23,6 +23,7 @@ public class Partida {
     private int turno;
     private RelojJuego reloj;
     private EstadoPartida estado;
+    private TipoEquipo ganador;
 
     public Partida() {
         this.equipoRojo = new Equipo(TipoEquipo.ROJO_AEREO);
@@ -135,4 +136,7 @@ public class Partida {
     public void setEstado(EstadoPartida estado) { this.estado = estado; }
     public Equipo getEquipoRojo() { return equipoRojo; }
     public Equipo getEquipoAzul() { return equipoAzul; }
+    public TipoEquipo getGanador() { return ganador; }
+    public void setGanador(TipoEquipo ganador) { this.ganador = ganador; }
+
 }
