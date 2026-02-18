@@ -1,11 +1,13 @@
 package LogicaNegocio.Clases.ObjetosJuego;
 
 import LogicaNegocio.Enums.Rol;
+import LogicaNegocio.Enums.TipoEquipo;
 
 public class Jugador {
     private String id;
     private String nombre;
     private Rol rol;
+    private TipoEquipo equipo; //Le agregue esto que nos habiamos olvidado jeje
 
     public Jugador() {}
 
@@ -20,4 +22,6 @@ public class Jugador {
     public void setNombre(String nombre) { this.nombre = nombre; }
     public Rol getRol() { return rol; }
     public void setRol(Rol rol) { this.rol = rol; }
+    public TipoEquipo getEquipo() { return equipo; }
+    public void setEquipo(TipoEquipo equipo) { this.equipo = equipo; }
 }

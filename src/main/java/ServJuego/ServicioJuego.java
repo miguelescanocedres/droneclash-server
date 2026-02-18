@@ -6,7 +6,10 @@ import LogicaNegocio.Clases.ControlJuego.Partida;
 import LogicaNegocio.Clases.ClasesAuxiliares.Posicion;
 import LogicaNegocio.Clases.ObjetosJuego.*;
 import LogicaNegocio.Excepciones.ReglaJuegoException;
+import LogicaNegocio.Clases.ControlJuego.Equipo;
 import org.springframework.stereotype.Service;
+import LogicaNegocio.Enums.TipoEquipo;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +21,7 @@ public class ServicioJuego {
     private static final int FILAS = 40;
     private static final int COLUMNAS = 40;
 
-    public ServicioJuego() {
+    /*public ServicioJuego() {
         inicializarJuego();
     }
 
@@ -42,9 +45,62 @@ public class ServicioJuego {
         PortaDronesAereo porta = new PortaDronesAereo(posPorta, jugadorA);
         partida.getTablero().colocarUnidad(porta, posPorta);
         partida.registrarUnidad(porta);
+    }*/
 
-
+    public ServicioJuego() {
+        motorJuego = new MotorJuego();
     }
+
+    public static RespuestaUnirseJugador unirJugador(SolicitudUnirseJugador solicitud)
+            throws ReglaJuegoException {
+
+        String idJugador = solicitud.getIdJugador();
+        if (idJugador == null || idJugador.trim().isEmpty()) {
+            throw new ReglaJuegoException("El idJugador es requerido.");
+        }
+
+        TipoEquipo equipoAsignado = motorJuego.agregarJugador(idJugador);
+
+        Partida partida = motorJuego.getPartidaActual();
+        Equipo equipo = (equipoAsignado == TipoEquipo.ROJO_AEREO)
+                ? partida.getEquipoRojo()
+                : partida.getEquipoAzul();
+
+        Jugador jugadorAgregado = equipo.getJugadores().stream()
+                .filter(j -> j.getId().equals(idJugador))
+                .findFirst()
+                .orElseThrow(() -> new ReglaJuegoException("Error interno: jugador no encontrado."));
+
+        return new RespuestaUnirseJugador(
+                idJugador,
+                equipoAsignado.name(),
+                jugadorAgregado.getRol().name(),
+                partida.getEquipoRojo().getCantidadJugadores(),
+                partida.getEquipoAzul().getCantidadJugadores()
+        );
+    }
+
+    public static EstadoJuego iniciarPartida(SolicitudIniciarPartida solicitud)
+            throws ReglaJuegoException {
+
+        if (solicitud.getPosicionRojo() == null || solicitud.getPosicionAzul() == null) {
+            throw new ReglaJuegoException("Se requieren las posiciones de ambos PortaDrones.");
+        }
+
+        Posicion posRojo = new Posicion(
+                solicitud.getPosicionRojo().getX(),
+                solicitud.getPosicionRojo().getY()
+        );
+        Posicion posAzul = new Posicion(
+                solicitud.getPosicionAzul().getX(),
+                solicitud.getPosicionAzul().getY()
+        );
+
+        motorJuego.iniciarJuego(posRojo, posAzul);
+
+        return obtenerEstadoJuego();
+    }
+
 
 
     public static EstadoJuego procesarAccion(AccionJuego accion) throws ReglaJuegoException {
@@ -95,8 +151,11 @@ public class ServicioJuego {
 
         estadoJuegoDTO.setTurno(partidaActual.getTurno());
         estadoJuegoDTO.setTiempoRestante(partidaActual.getReloj().getTiempoRestante());
-        estadoJuegoDTO.setEstadoPartida("playing");
-        estadoJuegoDTO.setGanador(null);
+        estadoJuegoDTO.setEstadoPartida(partidaActual.getEstado().name());
+
+        TipoEquipo ganador = partidaActual.getGanador();
+        estadoJuegoDTO.setGanador(ganador != null ? ganador.name() : null);
+
 
         List<DatosDrone> dronesDTO = new ArrayList<>();
         List<DatosPortaDron> portaDronesDTO = new ArrayList<>();
@@ -111,7 +170,7 @@ public class ServicioJuego {
             if (unidad instanceof Dron dron) {
                 DatosDrone datosDrone = new DatosDrone();
                 datosDrone.setId(dron.getId());
-                datosDrone.setEquipo("A");
+                datosDrone.setEquipo(determinarEquipo(dron, partidaActual));
                 datosDrone.setCarga(dron instanceof DronAereo ? "bomba" : "misil");
                 datosDrone.setX(dron.getPosicion().getX());
                 datosDrone.setY(dron.getPosicion().getY());
@@ -127,7 +186,7 @@ public class ServicioJuego {
             } else if (unidad instanceof PortaDrones portaDron) {
                 DatosPortaDron datosPortaDron = new DatosPortaDron();
                 datosPortaDron.setId(portaDron.getId());
-                datosPortaDron.setEquipo("A");
+                datosPortaDron.setEquipo(determinarEquipo(portaDron, partidaActual));
                 datosPortaDron.setTipo(portaDron instanceof PortaDronesAereo ? "aereo" : "naval");
                 datosPortaDron.setX(portaDron.getPosicion().getX());
                 datosPortaDron.setY(portaDron.getPosicion().getY());
@@ -151,4 +210,16 @@ public class ServicioJuego {
 
         return estadoJuegoDTO;
     }
+
+    private static String determinarEquipo(Unidad unidad, Partida partida) {
+        if (unidad.getPropietario() == null) return "DESCONOCIDO";
+        String idPropietario = unidad.getPropietario().getId();
+        if (partida.getEquipoRojo().tieneJugador(idPropietario)) {
+            return TipoEquipo.ROJO_AEREO.name();
+        } else if (partida.getEquipoAzul().tieneJugador(idPropietario)) {
+            return TipoEquipo.AZUL_NAVAL.name();
+        }
+        return "DESCONOCIDO";
+    }
+
 }
