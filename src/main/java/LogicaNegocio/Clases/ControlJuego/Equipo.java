@@ -1,12 +1,9 @@
 package LogicaNegocio.Clases.ControlJuego;
 
-import LogicaNegocio.Clases.ObjetosJuego.Dron;
 import LogicaNegocio.Clases.ObjetosJuego.Jugador;
 import LogicaNegocio.Clases.ObjetosJuego.PortaDrones;
-import LogicaNegocio.Enums.Rol;
 import LogicaNegocio.Enums.TipoEquipo;
 
-import java.awt.image.Kernel;
 import java.util.LinkedList;
 
 public class Equipo {
@@ -34,11 +31,6 @@ public class Equipo {
     }
 
     public void agregarJugador(Jugador jugador) {
-        if (jugadores.isEmpty()) {
-            jugador.setRol(Rol.PORTADRONES);
-        } else {
-            jugador.setRol(Rol.PILOTO_DRON);
-        }
         jugador.setEquipo(this.tipoEquipo);
         jugadores.add(jugador);
     }
@@ -51,7 +43,7 @@ public class Equipo {
     }
 
     public boolean tieneJugador(String idJugador) {
-        return jugadores.find(idJugador));
+        return false; // jugadores.find(idJugador));
     }
 
     public int getCantidadJugadores() {
