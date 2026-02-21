@@ -4,8 +4,8 @@ import LogicaNegocio.Clases.ClasesAuxiliares.Posicion;
 import LogicaNegocio.Clases.ObjetosJuego.Unidad;
 
 public class Tablero {
-    public static final int FILAS = 40;
-    public static final int COLUMNAS= 40;
+    public static final int FILAS = 18;
+    public static final int COLUMNAS= 32;
     private Celda[][] grilla;
 
     public Tablero() {
@@ -48,4 +48,3 @@ public class Tablero {
 
     public Celda[][] getGrilla() { return grilla; }
 }
-

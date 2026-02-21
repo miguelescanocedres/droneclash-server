@@ -31,11 +31,6 @@ public class Equipo {
     }
 
     public void agregarJugador(Jugador jugador) {
-        if (jugadores.isEmpty()) {
-            jugador.setRol(Rol.PORTADRONES);
-        } else {
-            jugador.setRol(Rol.PILOTO_DRON);
-        }
         jugador.setEquipo(this.tipoEquipo);
         jugadores.add(jugador);
     }

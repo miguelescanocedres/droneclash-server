@@ -8,11 +8,10 @@ public class RespuestaUnirseJugador {
     private int jugadoresAzul;
 
     public RespuestaUnirseJugador(String idJugador, String equipoAsignado,
-                                  String rolAsignado, int jugadoresRojo,
+                                   int jugadoresRojo,
                                   int jugadoresAzul) {
         this.idJugador = idJugador;
         this.equipoAsignado = equipoAsignado;
-        this.rolAsignado = rolAsignado;
         this.jugadoresRojo = jugadoresRojo;
         this.jugadoresAzul = jugadoresAzul;
     }

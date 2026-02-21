@@ -11,10 +11,11 @@ import java.util.Map;
 import java.util.Random;
 
 public class Partida {
+    private static final int ANCHO_ZONA_DESPLIEGUE = Math.max(1, Tablero.COLUMNAS / 3);
     public static final int ZONA_ROJO_COL_MIN = 0;
-    public static final int ZONA_ROJO_COL_MAX = 12;
-    public static final int ZONA_AZUL_COL_MIN = 27;
-    public static final int ZONA_AZUL_COL_MAX = 39;
+    public static final int ZONA_ROJO_COL_MAX = ANCHO_ZONA_DESPLIEGUE - 1;
+    public static final int ZONA_AZUL_COL_MIN = Tablero.COLUMNAS - ANCHO_ZONA_DESPLIEGUE;
+    public static final int ZONA_AZUL_COL_MAX = Tablero.COLUMNAS - 1;
 
     private Equipo equipoRojo;
     private Equipo equipoAzul;

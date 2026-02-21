@@ -1,6 +1,7 @@
 package ServJuego;
 
 import ConexionServCli.DTO.*;
+import LogicaNegocio.Clases.ControlJuego.Tablero;
 import LogicaNegocio.Clases.ControlJuego.MotorJuego;
 import LogicaNegocio.Clases.ControlJuego.Partida;
 import LogicaNegocio.Clases.ClasesAuxiliares.Posicion;
@@ -18,8 +19,8 @@ import java.util.List;
 public class ServicioJuego {
 
     private static MotorJuego motorJuego;
-    private static final int FILAS = 40;
-    private static final int COLUMNAS = 40;
+    private static final int FILAS = Tablero.FILAS;
+    private static final int COLUMNAS = Tablero.COLUMNAS;
 
     /*public ServicioJuego() {
         inicializarJuego();
@@ -74,7 +75,6 @@ public class ServicioJuego {
         return new RespuestaUnirseJugador(
                 idJugador,
                 equipoAsignado.name(),
-                jugadorAgregado.getRol().name(),
                 partida.getEquipoRojo().getCantidadJugadores(),
                 partida.getEquipoAzul().getCantidadJugadores()
         );
@@ -95,8 +95,8 @@ public class ServicioJuego {
             case "moverDron":
                 motorJuego.procesarMoverDron(
                         accion.getIdDron(),
-                        accion.getObjetivoX(),
-                        accion.getObjetivoY()
+                        accion.getObjetivoY(),
+                        accion.getObjetivoX()
                 );
                 System.out.println("INFO: Acción 'moverDron' prxocesada con éxito.");
                 break;
@@ -104,8 +104,8 @@ public class ServicioJuego {
             case "moverPortaDron":
                 motorJuego.procesarMoverPortaDrones(
                         accion.getIdPortaDron(),
-                        accion.getObjetivoX(),
-                        accion.getObjetivoY()
+                        accion.getObjetivoY(),
+                        accion.getObjetivoX()
                 );
                 System.out.println("INFO: Acción 'moverPortaDron' procesada con éxito.");
                 break;
@@ -113,8 +113,8 @@ public class ServicioJuego {
             case "dispararDron":
                 motorJuego.procesarDispararDron(
                         accion.getIdDron(),
-                        accion.getObjetivoX(),
-                        accion.getObjetivoY());
+                        accion.getObjetivoY(),
+                        accion.getObjetivoX());
                 break;
 
 
@@ -156,32 +156,33 @@ public class ServicioJuego {
             if (unidad instanceof Dron dron) {
                 DatosDrone datosDrone = new DatosDrone();
                 datosDrone.setId(dron.getId());
-                datosDrone.setEquipo(determinarEquipo(dron, partidaActual));
+                datosDrone.setEquipo(determinarEquipo(dron));
                 datosDrone.setCarga(dron instanceof DronAereo ? "bomba" : "misil");
-                datosDrone.setX(dron.getPosicion().getX());
-                datosDrone.setY(dron.getPosicion().getY());
+                // API: x=columna, y=fila. Internamente: x=fila, y=columna.
+                datosDrone.setX(dron.getPosicion().getY());
+                datosDrone.setY(dron.getPosicion().getX());
                 datosDrone.setCombustible(dron.getCombustibleActual());
                 datosDrone.setRangoVision(dron.getVisionRango());
                 datosDrone.setActivo(true);
                 dronesDTO.add(datosDrone);
 
                 celdasOcupadas.add(new DatosCelda(
-                        dron.getPosicion().getY(), dron.getPosicion().getX(),
+                        dron.getPosicion().getX(), dron.getPosicion().getY(),
                         true, dron.getId()));
 
             } else if (unidad instanceof PortaDrones portaDron) {
                 DatosPortaDron datosPortaDron = new DatosPortaDron();
                 datosPortaDron.setId(portaDron.getId());
-                datosPortaDron.setEquipo(determinarEquipo(portaDron, partidaActual));
+                datosPortaDron.setEquipo(determinarEquipo(portaDron));
                 datosPortaDron.setTipo(portaDron instanceof PortaDronesAereo ? "aereo" : "naval");
-                datosPortaDron.setX(portaDron.getPosicion().getX());
-                datosPortaDron.setY(portaDron.getPosicion().getY());
+                datosPortaDron.setX(portaDron.getPosicion().getY());
+                datosPortaDron.setY(portaDron.getPosicion().getX());
                 datosPortaDron.setVida(portaDron.getVida());
                 datosPortaDron.setRangoVision(portaDron.getVisionRango());
                 portaDronesDTO.add(datosPortaDron);
 
                 celdasOcupadas.add(new DatosCelda(
-                        portaDron.getPosicion().getY(), portaDron.getPosicion().getX(),
+                        portaDron.getPosicion().getX(), portaDron.getPosicion().getY(),
                         true, portaDron.getId()));
             }
         }
@@ -197,15 +198,11 @@ public class ServicioJuego {
         return estadoJuegoDTO;
     }
 
-    private static String determinarEquipo(Unidad unidad, Partida partida) {
-        if (unidad.getPropietario() == null) return "DESCONOCIDO";
-        String idPropietario = unidad.getPropietario().getId();
-        if (partida.getEquipoRojo().tieneJugador(idPropietario)) {
-            return TipoEquipo.ROJO_AEREO.name();
-        } else if (partida.getEquipoAzul().tieneJugador(idPropietario)) {
-            return TipoEquipo.AZUL_NAVAL.name();
+    private static String determinarEquipo(Unidad unidad) {
+        if (unidad.getEquipo() == null || unidad.getEquipo().getTipoEquipo() == null) {
+            return "DESCONOCIDO";
         }
-        return "DESCONOCIDO";
+        return unidad.getEquipo().getTipoEquipo().name();
     }
 
 }

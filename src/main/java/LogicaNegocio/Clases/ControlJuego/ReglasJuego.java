@@ -114,10 +114,10 @@ public class ReglasJuego {
             return;
         }
 
-        if (atacante.getPropietario().equals(objetivo.getPropietario())) {
-            System.out.println("Intento de ataque a una unidad aliada");
-            return;
-        }
+//        if (atacante.getPropietario().equals(objetivo.getPropietario())) {
+//            System.out.println("Intento de ataque a una unidad aliada");
+//            return;
+//        }
 
         boolean atacanteEsAereo = atacante instanceof DronAereo;
         boolean objetivoEsAereo = objetivo instanceof DronAereo || objetivo instanceof PortaDronesAereo;
