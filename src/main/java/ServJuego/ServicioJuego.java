@@ -5,11 +5,15 @@ import LogicaNegocio.Clases.ControlJuego.Tablero;
 import LogicaNegocio.Clases.ControlJuego.MotorJuego;
 import LogicaNegocio.Clases.ControlJuego.Partida;
 import LogicaNegocio.Clases.ClasesAuxiliares.Posicion;
+import LogicaNegocio.Clases.ObjetosJuego.Jugador;
 import LogicaNegocio.Clases.ObjetosJuego.*;
 import LogicaNegocio.Excepciones.ReglaJuegoException;
 import LogicaNegocio.Clases.ControlJuego.Equipo;
 import org.springframework.stereotype.Service;
 import LogicaNegocio.Enums.TipoEquipo;
+import ConexionServCli.DTO.DatosJugador;
+import ConexionServCli.DTO.RespuestaEquipos;
+
 
 
 import java.util.ArrayList;
@@ -204,5 +208,22 @@ public class ServicioJuego {
         }
         return unidad.getEquipo().getTipoEquipo().name();
     }
+
+    public static RespuestaEquipos obtenerEquipos() {
+        Partida partida = motorJuego.getPartidaActual();
+
+        List<DatosJugador> equipoAereo = new ArrayList<>();
+        for (Jugador j : partida.getEquipoRojo().getJugadores()) {
+            equipoAereo.add(new DatosJugador(j.getId(), j.getNombre()));
+        }
+
+        List<DatosJugador> equipoNaval = new ArrayList<>();
+        for (Jugador j : partida.getEquipoAzul().getJugadores()) {
+            equipoNaval.add(new DatosJugador(j.getId(), j.getNombre()));
+        }
+
+        return new RespuestaEquipos(equipoAereo, equipoNaval);
+    }
+
 
 }

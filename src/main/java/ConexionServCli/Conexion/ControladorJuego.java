@@ -5,6 +5,8 @@ import LogicaNegocio.Excepciones.ReglaJuegoException;
 import ServJuego.ServicioJuego;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ConexionServCli.DTO.RespuestaEquipos;
+
 
 
 
@@ -56,6 +58,12 @@ public class ControladorJuego {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/equipos")
+    public ResponseEntity<RespuestaEquipos> obtenerEquipos() {
+        return ResponseEntity.ok(ServicioJuego.obtenerEquipos());
+    }
+
 
 
 
