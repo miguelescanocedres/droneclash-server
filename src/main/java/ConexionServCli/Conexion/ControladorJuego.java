@@ -48,9 +48,9 @@ public class ControladorJuego {
     }
 
     @PostMapping("/iniciar")
-    public ResponseEntity<?> iniciarPartida(@RequestBody SolicitudIniciarPartida solicitud) {
+    public ResponseEntity<?> iniciarPartida() {
         try {
-            EstadoJuego estado = ServicioJuego.iniciarPartida(solicitud);
+            EstadoJuego estado = ServicioJuego.iniciarPartida();
             return ResponseEntity.ok(estado);
         } catch (ReglaJuegoException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

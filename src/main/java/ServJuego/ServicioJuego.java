@@ -80,24 +80,10 @@ public class ServicioJuego {
         );
     }
 
-    public static EstadoJuego iniciarPartida(SolicitudIniciarPartida solicitud)
+    public static EstadoJuego iniciarPartida()
             throws ReglaJuegoException {
 
-        if (solicitud.getPosicionRojo() == null || solicitud.getPosicionAzul() == null) {
-            throw new ReglaJuegoException("Se requieren las posiciones de ambos PortaDrones.");
-        }
-
-        Posicion posRojo = new Posicion(
-                solicitud.getPosicionRojo().getX(),
-                solicitud.getPosicionRojo().getY()
-        );
-        Posicion posAzul = new Posicion(
-                solicitud.getPosicionAzul().getX(),
-                solicitud.getPosicionAzul().getY()
-        );
-
-        motorJuego.iniciarJuego(posRojo, posAzul);
-
+        motorJuego.iniciarJuego();
         return obtenerEstadoJuego();
     }
 

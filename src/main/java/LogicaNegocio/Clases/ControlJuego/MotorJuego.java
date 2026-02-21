@@ -28,8 +28,8 @@ public class MotorJuego {
         return partidaActual.agregarJugador(idJugador);
     }
 
-    public void iniciarJuego(Posicion posRojo, Posicion posAzul) throws ReglaJuegoException {
-        partidaActual.iniciarPartida(posRojo, posAzul);
+    public void iniciarJuego() throws ReglaJuegoException {
+        partidaActual.iniciarPartida();
     }
 
     private void validarPartidaEnCurso() throws ReglaJuegoException {

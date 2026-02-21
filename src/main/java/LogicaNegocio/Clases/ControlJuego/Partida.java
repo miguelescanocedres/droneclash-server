@@ -8,6 +8,7 @@ import LogicaNegocio.Excepciones.ReglaJuegoException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class Partida {
     public static final int ZONA_ROJO_COL_MIN = 0;
@@ -54,62 +55,105 @@ public class Partida {
         }
     }
 
-    public void iniciarPartida(Posicion posRojo, Posicion posAzul) throws ReglaJuegoException {
+    public void iniciarPartida() throws ReglaJuegoException {
         if (estado != EstadoPartida.ESPERANDO_JUGADORES) {
             throw new ReglaJuegoException("La partida ya fue iniciada.");
         }
-        if (equipoRojo.getCantidadJugadores() < 1) {
-            throw new ReglaJuegoException("El equipo Rojo necesita al menos 1 jugador.");
-        }
-        if (equipoAzul.getCantidadJugadores() < 1) {
-            throw new ReglaJuegoException("El equipo Azul necesita al menos 1 jugador.");
+        if (equipoRojo.getCantidadJugadores() == 0 || equipoAzul.getCantidadJugadores() == 0) {
+            throw new ReglaJuegoException("No hay suficientes jugadores para iniciar la partida.");
         }
 
-        validarPosicionEnZona(posRojo, TipoEquipo.ROJO_AEREO);
-        validarPosicionEnZona(posAzul, TipoEquipo.AZUL_NAVAL);
-
-        if (!tablero.esPosicionValida(posRojo)) {
-            throw new ReglaJuegoException("La posicion del PortaDrones Rojo es invalida o esta ocupada.");
-        }
-        if (!tablero.esPosicionValida(posAzul)) {
-            throw new ReglaJuegoException("La posicion del PortaDrones Azul es invalida o esta ocupada.");
-        }
-
-        //Team Rojo - Comunistas
-        Jugador liderRojo = equipoRojo.obtenerLider();
-        PortaDronesAereo portaRojo = new PortaDronesAereo(posRojo, liderRojo);
+        // Colocación del equipo ROJO
+        Posicion posPortaRojo = generarPosicionAleatoriaEnZona(TipoEquipo.ROJO_AEREO);
+        PortaDronesAereo portaRojo = new PortaDronesAereo(posPortaRojo, equipoRojo);
+        this.registrarUnidad(portaRojo);
+        this.tablero.colocarUnidad(portaRojo, posPortaRojo);
         equipoRojo.setPortaDrones(portaRojo);
-        tablero.colocarUnidad(portaRojo, posRojo);
-        registrarUnidad(portaRojo);
+        generarDronesAlrededor(portaRojo, equipoRojo);
 
-        //Team Azul - Yankees
-        Jugador liderAzul = equipoAzul.obtenerLider();
-        PortaDronesNaval portaAzul = new PortaDronesNaval(posAzul, liderAzul);
+        //  Colocación del equipo AZUL
+        Posicion posPortaAzul = generarPosicionAleatoriaEnZona(TipoEquipo.AZUL_NAVAL);
+        PortaDronesNaval portaAzul = new PortaDronesNaval(posPortaAzul, equipoAzul);
+        this.registrarUnidad(portaAzul);
+        this.tablero.colocarUnidad(portaAzul, posPortaAzul);
         equipoAzul.setPortaDrones(portaAzul);
-        tablero.colocarUnidad(portaAzul, posAzul);
-        registrarUnidad(portaAzul);
+        generarDronesAlrededor(portaAzul, equipoAzul);
 
-        this.estado = EstadoPartida.EN_CURSO;
-        this.turnoActual = TipoEquipo.ROJO_AEREO;
-        this.turno = 1;
-        reloj.iniciar();
+        // Cambiar el estado de la partida
+        this.setEstado(EstadoPartida.EN_CURSO);
+        this.setTurnoActual(TipoEquipo.ROJO_AEREO);
+        this.setTurno(1);
+        this.reloj.iniciar();
+
     }
 
-    // El numero de columnas obviamente lo podemos cambiar. Yo use estos numeros solo para probar
-    private void validarPosicionEnZona(Posicion pos, TipoEquipo equipo) throws ReglaJuegoException {
-        int columna = pos.getY();
+    private Posicion generarPosicionAleatoriaEnZona(TipoEquipo equipo) {
+
+        Random rand = new Random();
+
+        //  genera un número entre 0 y FILAS_TABLERO - 1.
+        int fila = rand.nextInt(Tablero.FILAS);
+        int columna;
+        //  Determinamos el rango de columnas según el equipo.
         if (equipo == TipoEquipo.ROJO_AEREO) {
-            if (columna < ZONA_ROJO_COL_MIN || columna > ZONA_ROJO_COL_MAX) {
-                throw new ReglaJuegoException(
-                        "PortaDrones Rojo debe colocarse en columnas 0-12 (zona Roja). Columna recibida: " + columna);
-            }
+            // rand.nextInt(min, max + 1) genera un número entre min (incluido) y max (incluido).
+            columna = rand.nextInt(ZONA_ROJO_COL_MIN, ZONA_ROJO_COL_MAX + 1);
         } else {
-            if (columna < ZONA_AZUL_COL_MIN || columna > ZONA_AZUL_COL_MAX) {
-                throw new ReglaJuegoException(
-                        "PortaDrones Azul debe colocarse en columnas 27-39 (zona Azul). Columna recibida: " + columna);
+            // Si es el equipo Azul, generamos una columna en su zona de despliegue.
+            columna = rand.nextInt(ZONA_AZUL_COL_MIN, ZONA_AZUL_COL_MAX + 1);
+        }
+
+        return new Posicion(fila, columna);
+    }
+
+    private void generarDronesAlrededor(PortaDrones portaDrones, Equipo equipo) {
+        int cantidadDronesACrear = (equipo.tipoEquipo== TipoEquipo.ROJO_AEREO) ? 12 : 6;
+
+        int dronesCreados = 0;
+        int radioDeBusqueda = 1; // Empezamos buscando en las casillas adyacentes (radio 1 = cuadrado 3x3)
+
+        Posicion centro = portaDrones.getPosicion();
+
+
+        while (dronesCreados < cantidadDronesACrear) {
+
+            // Recorremos un cuadrado definido por el radio de búsqueda actual.
+            for (int x = centro.getX() - radioDeBusqueda; x <= centro.getX() + radioDeBusqueda; x++) {
+                for (int y = centro.getY() - radioDeBusqueda; y <= centro.getY() + radioDeBusqueda; y++) {
+
+                    if (dronesCreados >= cantidadDronesACrear) {
+                        return;
+                    }
+
+                    // --- Comprobaciones para cada casilla ---
+                    if (!tablero.estaDentroDelTablero(x, y)) {
+                        continue;
+                    }
+                    if (tablero.getCelda(x, y).estaOcupada()) {
+                        continue;
+                    }
+                    // Si la casilla es válida, creamos un dron
+                    Posicion posDron = new Posicion(x, y);
+                    Dron nuevoDron;
+
+                    if (equipo.getTipoEquipo() == TipoEquipo.ROJO_AEREO) {
+                        nuevoDron = new DronAereo(posDron,equipo);
+                    } else {
+                        nuevoDron = new DronNaval(posDron,equipo);
+                    }
+                    this.registrarUnidad(nuevoDron);
+                    this.tablero.colocarUnidad(nuevoDron, posDron);
+                    dronesCreados++;
+
+
+                }
             }
+            // Si terminamos de recorrer el cuadrado y aún faltan drones,
+            // aumentamos el radio para buscar en un área más grande en la siguiente iteración.
+            radioDeBusqueda++;
         }
     }
+
 
     public void registrarUnidad(Unidad unidad) {
         unidadesPorId.put(unidad.getId(), unidad);

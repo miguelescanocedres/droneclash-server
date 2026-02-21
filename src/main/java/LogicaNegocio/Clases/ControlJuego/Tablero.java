@@ -48,3 +48,4 @@ public class Tablero {
 
     public Celda[][] getGrilla() { return grilla; }
 }
+
