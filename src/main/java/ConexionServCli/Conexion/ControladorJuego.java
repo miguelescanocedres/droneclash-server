@@ -6,6 +6,8 @@ import ServJuego.ServicioJuego;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ConexionServCli.DTO.RespuestaEquipos;
+import LogicaNegocio.Enums.TipoEquipo;
+
 
 
 
@@ -19,11 +21,13 @@ public class ControladorJuego {
         // Es la puerta de entrada desde el front el front va a pedir
         // Get......./estado y se ejecuta lo de abajo, el estado de la partida para devolver
     @GetMapping("/estado")
-    public EstadoJuego obtenerEstado(){
-            return ServicioJuego.obtenerEstadoJuego();
-        }
+    public EstadoJuego obtenerEstado(@RequestParam(required = false) String equipo) {
+        TipoEquipo tipo = (equipo != null) ? TipoEquipo.valueOf(equipo) : null;
+        return ServicioJuego.obtenerEstadoJuego(tipo);
+    }
 
-        // POD, el front envia la accion de juego y este la valida
+
+    // POD, el front envia la accion de juego y este la valida
         @PostMapping("/accion")
         public ResponseEntity<?> recibirAccion(@RequestBody AccionJuego accion) {
             System.out.println("Procesando acción: " + accion.getAccion());

@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import LogicaNegocio.Enums.TipoEquipo;
 import ConexionServCli.DTO.DatosJugador;
 import ConexionServCli.DTO.RespuestaEquipos;
+import java.util.HashSet;
+import java.util.Set;
+
 
 
 
@@ -88,7 +91,7 @@ public class ServicioJuego {
             throws ReglaJuegoException {
 
         motorJuego.iniciarJuego();
-        return obtenerEstadoJuego();
+        return obtenerEstadoJuego(null);
     }
 
 
@@ -127,15 +130,21 @@ public class ServicioJuego {
                 throw new ReglaJuegoException("Acción desconocida o no implementada: " + accion.getAccion());
         }
 
-        return obtenerEstadoJuego();
+        //Devuelvo el equipo
+        String idUnidad = accion.getIdDron() != null ? accion.getIdDron() : accion.getIdPortaDron();
+        Unidad actor = motorJuego.getPartidaActual().buscarUnidadPorId(idUnidad);
+        TipoEquipo equipoActor = (actor != null) ? actor.getEquipo().getTipoEquipo() : null;
+        return obtenerEstadoJuego(equipoActor);
+
     }
 
-    public static EstadoJuego obtenerEstadoJuego() {
-        return convertirAEstadoJuego();
+    public static EstadoJuego obtenerEstadoJuego(TipoEquipo equipo) {
+        return convertirAEstadoJuego(equipo);
     }
+
 
     //Convierte los datos reales de las unidades del tablero a DTO y crea al DTO estado de juego.
-    private static EstadoJuego convertirAEstadoJuego() {
+    private static EstadoJuego convertirAEstadoJuego(TipoEquipo equipoSolicitante) {
         EstadoJuego estadoJuegoDTO = new EstadoJuego();
         Partida partidaActual = motorJuego.getPartidaActual();
 
@@ -146,23 +155,28 @@ public class ServicioJuego {
         TipoEquipo ganador = partidaActual.getGanador();
         estadoJuegoDTO.setGanador(ganador != null ? ganador.name() : null);
 
+        // Calcular FOW: qué celdas ve el equipo solicitante
+        Set<String> celdasVisiblesSet = (equipoSolicitante != null)
+                ? calcularCeldasVisibles(equipoSolicitante, partidaActual)
+                : null; // null = sin filtro (debug / inicio)
 
         List<DatosDrone> dronesDTO = new ArrayList<>();
         List<DatosPortaDron> portaDronesDTO = new ArrayList<>();
         List<DatosCelda> celdasOcupadas = new ArrayList<>();
 
-        /*
-         Bucle que recorre todo el tablero cargando los datos de drones
-          y portadrones en la lista que
-         que envia el DTO estado de juego. con la vista de juego actualizada
-        */
         for (Unidad unidad : partidaActual.getUnidadesPorId().values()) {
+            boolean esPropia = (equipoSolicitante == null)
+                    || unidad.getEquipo().getTipoEquipo() == equipoSolicitante;
+            String celdaKey = unidad.getPosicion().getX() + "," + unidad.getPosicion().getY();
+            boolean esVisible = esPropia || celdasVisiblesSet == null || celdasVisiblesSet.contains(celdaKey);
+
+            if (!esVisible) continue;
+
             if (unidad instanceof Dron dron) {
                 DatosDrone datosDrone = new DatosDrone();
                 datosDrone.setId(dron.getId());
                 datosDrone.setEquipo(determinarEquipo(dron));
                 datosDrone.setCarga(dron instanceof DronAereo ? "bomba" : "misil");
-                // API: x=columna, y=fila. Internamente: x=fila, y=columna.
                 datosDrone.setX(dron.getPosicion().getY());
                 datosDrone.setY(dron.getPosicion().getX());
                 datosDrone.setCombustible(dron.getCombustibleActual());
@@ -195,12 +209,25 @@ public class ServicioJuego {
         estadoJuegoDTO.setPortaDrones(portaDronesDTO);
         estadoJuegoDTO.setTablero(new DatosTablero(FILAS, COLUMNAS, celdasOcupadas));
 
+        // Convertir celdas visibles a coordendas API [columna, fila] para el DTO
+        if (celdasVisiblesSet != null) {
+            List<int[]> celdasVisiblesList = new ArrayList<>();
+            for (String key : celdasVisiblesSet) {
+                String[] parts = key.split(",");
+                int fila = Integer.parseInt(parts[0]);
+                int col  = Integer.parseInt(parts[1]);
+                celdasVisiblesList.add(new int[]{col, fila}); // API: x=col, y=fila
+            }
+            estadoJuegoDTO.setCeldasVisibles(celdasVisiblesList);
+        }
+
         if (!dronesDTO.isEmpty()) {
             estadoJuegoDTO.setIdUnidadActiva(dronesDTO.get(0).getId());
         }
 
         return estadoJuegoDTO;
     }
+
 
     private static String determinarEquipo(Unidad unidad) {
         if (unidad.getEquipo() == null || unidad.getEquipo().getTipoEquipo() == null) {
@@ -223,6 +250,30 @@ public class ServicioJuego {
         }
 
         return new RespuestaEquipos(equipoAereo, equipoNaval);
+    }
+
+    private static Set<String> calcularCeldasVisibles(TipoEquipo tipoEquipo, Partida partida) {
+        Equipo equipo = (tipoEquipo == TipoEquipo.ROJO_AEREO)
+                ? partida.getEquipoRojo() : partida.getEquipoAzul();
+        Set<String> visibles = new HashSet<>();
+
+        for (Unidad u : partida.getUnidadesPorId().values()) {
+            if (u.getEquipo() == equipo && u.getVisionRango() > 0) {
+                int fila  = u.getPosicion().getX();
+                int col   = u.getPosicion().getY();
+                int rango = u.getVisionRango();
+                for (int df = -rango; df <= rango; df++) {
+                    for (int dc = -rango; dc <= rango; dc++) {
+                        if (Math.sqrt(df * df + dc * dc) <= rango) {  // circular (Euclidiana)
+                            int nf = fila + df, nc = col + dc;
+                            if (partida.getTablero().estaDentroDelTablero(nf, nc))
+                                visibles.add(nf + "," + nc);
+                        }
+                    }
+                }
+            }
+        }
+        return visibles;
     }
 
 

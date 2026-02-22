@@ -14,6 +14,8 @@ public class EstadoJuego {
     private List<DatosDrone> drones;
     private DatosTablero tablero;
     private int tiempoRestante;
+    private List<int[]> celdasVisibles;
+
 
 
 
@@ -81,4 +83,13 @@ public class EstadoJuego {
     public void setTiempoRestante(int tiempoRestante) {
         this.tiempoRestante = tiempoRestante;
     }
+
+    public List<int[]> getCeldasVisibles() {
+        return celdasVisibles;
+    }
+
+    public void setCeldasVisibles(List<int[]> celdasVisibles) {
+        this.celdasVisibles = celdasVisibles;
+    }
+
 }
