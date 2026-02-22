@@ -10,6 +10,7 @@ import LogicaNegocio.Clases.ObjetosJuego.*;
 import LogicaNegocio.Excepciones.ReglaJuegoException;
 import LogicaNegocio.Clases.ControlJuego.Equipo;
 import org.springframework.stereotype.Service;
+import LogicaNegocio.Enums.EstadoPartida;
 import LogicaNegocio.Enums.TipoEquipo;
 import ConexionServCli.DTO.DatosJugador;
 import ConexionServCli.DTO.RespuestaEquipos;
@@ -28,6 +29,8 @@ public class ServicioJuego {
     private static MotorJuego motorJuego;
     private static final int FILAS = Tablero.FILAS;
     private static final int COLUMNAS = Tablero.COLUMNAS;
+    private static final int SEGUNDOS_CUENTA_REGRESIVA_INICIO = 30;
+    private static volatile long cuentaRegresivaFinMs = -1L;
 
     /*public ServicioJuego() {
         inicializarJuego();
@@ -74,7 +77,7 @@ public class ServicioJuego {
                 ? partida.getEquipoRojo()
                 : partida.getEquipoAzul();
 
-        Jugador jugadorAgregado = equipo.getJugadores().stream()
+        equipo.getJugadores().stream()
                 .filter(j -> j.getId().equals(idJugador))
                 .findFirst()
                 .orElseThrow(() -> new ReglaJuegoException("Error interno: jugador no encontrado."));
@@ -89,8 +92,16 @@ public class ServicioJuego {
 
     public static EstadoJuego iniciarPartida()
             throws ReglaJuegoException {
+        Partida partida = motorJuego.getPartidaActual();
+        if (partida.getEstado() == EstadoPartida.EN_CURSO) {
+            return obtenerEstadoJuego(null);
+        }
+        if (partida.getEstado() == EstadoPartida.FINALIZADA) {
+            throw new ReglaJuegoException("La partida ya fue finalizada.");
+        }
 
         motorJuego.iniciarJuego();
+        cuentaRegresivaFinMs = -1L;
         return obtenerEstadoJuego(null);
     }
 
@@ -249,7 +260,31 @@ public class ServicioJuego {
             equipoNaval.add(new DatosJugador(j.getId(), j.getNombre()));
         }
 
-        return new RespuestaEquipos(equipoAereo, equipoNaval);
+        int segundosRestantesInicio = calcularSegundosRestantesInicio(partida);
+        return new RespuestaEquipos(equipoAereo, equipoNaval, segundosRestantesInicio);
+    }
+
+    private static int calcularSegundosRestantesInicio(Partida partida) {
+        if (partida.getEstado() != EstadoPartida.ESPERANDO_JUGADORES) {
+            cuentaRegresivaFinMs = -1L;
+            return 0;
+        }
+
+        if (!equiposListosParaIniciar(partida)) {
+            cuentaRegresivaFinMs = -1L;
+            return SEGUNDOS_CUENTA_REGRESIVA_INICIO;
+        }
+
+        long ahora = System.currentTimeMillis();
+        if (cuentaRegresivaFinMs <= 0L) {
+            cuentaRegresivaFinMs = ahora + SEGUNDOS_CUENTA_REGRESIVA_INICIO * 1000L;
+        }
+        return (int) Math.max(0, Math.ceil((cuentaRegresivaFinMs - ahora) / 1000.0));
+    }
+
+    private static boolean equiposListosParaIniciar(Partida partida) {
+        return partida.getEquipoRojo().getCantidadJugadores() > 0
+                && partida.getEquipoAzul().getCantidadJugadores() > 0;
     }
 
     private static Set<String> calcularCeldasVisibles(TipoEquipo tipoEquipo, Partida partida) {
