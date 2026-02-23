@@ -9,6 +9,9 @@ import LogicaNegocio.Excepciones.ReglaJuegoException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Partida {
     private static final int ANCHO_ZONA_DESPLIEGUE = Math.max(1, Tablero.COLUMNAS / 3);
@@ -26,6 +29,7 @@ public class Partida {
     private RelojJuego reloj;
     private EstadoPartida estado;
     private TipoEquipo ganador;
+    private ScheduledExecutorService scheduler;
 
     public Partida() {
         this.equipoRojo = new Equipo(TipoEquipo.ROJO_AEREO);
@@ -33,7 +37,6 @@ public class Partida {
         this.tablero = new Tablero();
         this.unidadesPorId = new HashMap<>();
         this.turno = 1;
-        this.reloj = new RelojJuego();
         this.estado = EstadoPartida.ESPERANDO_JUGADORES;
     }
 
@@ -84,8 +87,8 @@ public class Partida {
         this.setEstado(EstadoPartida.EN_CURSO);
         this.setTurnoActual(TipoEquipo.ROJO_AEREO);
         this.setTurno(1);
-        this.reloj.iniciar();
-
+        this.reloj = new RelojJuego(equipoRojo.getJugadores());
+        iniciarLoop(100);
     }
 
     private Posicion generarPosicionAleatoriaEnZona(TipoEquipo equipo) {
@@ -155,6 +158,11 @@ public class Partida {
         }
     }
 
+    public void tick() {
+        if (reloj.turnoExpirado()) {
+            reloj.PasarTurno(getEquipoRojo().getJugadores(),getEquipoAzul().getJugadores());
+        }
+    }
 
     public void registrarUnidad(Unidad unidad) {
         unidadesPorId.put(unidad.getId(), unidad);
@@ -167,6 +175,24 @@ public class Partida {
     public void eliminarUnidad(Unidad unidad) {
         if (unidad != null) {
             unidadesPorId.remove(unidad.getId());
+        }
+    }
+
+    public void iniciarLoop(long intervaloMillis) {
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                tick();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, 0, intervaloMillis, TimeUnit.MILLISECONDS);
+    }
+
+    public void detenerLoop() {
+        if (scheduler != null && !scheduler.isShutdown()) {
+            scheduler.shutdownNow();
         }
     }
 
