@@ -43,7 +43,7 @@ public class Equipo {
     }
 
     public boolean tieneJugador(String idJugador) {
-        return false; // jugadores.find(idJugador));
+        return jugadores.stream().anyMatch(j -> j.getId().equals(idJugador)); // jugadores.find(idJugador));
     }
 
     public int getCantidadJugadores() {

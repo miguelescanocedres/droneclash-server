@@ -13,6 +13,7 @@ public abstract class PortaDrones extends Unidad {
         recargaPorTurno = 2;
         combustibleActual = combustibleMaximo;
         estado = EstadoUnidad.EN_VUELO;
+        visionRango = 8; // Se puede moidificar el rango
     }
 
     public void RecibirImpacto() {
