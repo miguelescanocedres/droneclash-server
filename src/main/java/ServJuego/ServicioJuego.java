@@ -4,7 +4,6 @@ import ConexionServCli.DTO.*;
 import LogicaNegocio.Clases.ControlJuego.Tablero;
 import LogicaNegocio.Clases.ControlJuego.MotorJuego;
 import LogicaNegocio.Clases.ControlJuego.Partida;
-import LogicaNegocio.Clases.ClasesAuxiliares.Posicion;
 import LogicaNegocio.Clases.ObjetosJuego.Jugador;
 import LogicaNegocio.Clases.ObjetosJuego.*;
 import LogicaNegocio.Excepciones.ReglaJuegoException;
@@ -311,5 +310,20 @@ public class ServicioJuego {
         return visibles;
     }
 
+
+
+    public static DatosHud obtenerDatosHud(String idDron) throws ReglaJuegoException {
+        Partida partidaActual = motorJuego.getPartidaActual();
+
+        String turnoDe = partidaActual.getTurnoActual().name();
+
+        Unidad unidadSeleccionada = partidaActual.buscarUnidadPorId(idDron);
+        Dron dronSeleccionado = (Dron) unidadSeleccionada;
+
+        int municion = dronSeleccionado.getMunicion();
+        String equipo = dronSeleccionado.getEquipo().getTipoEquipo().name();
+
+        return new DatosHud(turnoDe, municion, equipo);
+    }
 
 }

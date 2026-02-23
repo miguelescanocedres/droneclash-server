@@ -12,18 +12,8 @@ public class Equipo {
     PortaDrones portaDrones;
     boolean listoParaJugar = false;
 
-    public void generarFlota(TipoEquipo tipo){
 
-    }
 
-    public void distribuirUnidadesEntreJugadores(){
-
-    }
-    public Jugador ObtenerLider (){
-        return new Jugador();
-    }
-
-    //No toque las clases del Tino pero creo que no las necesitamos
 
     public Equipo(TipoEquipo tipoEquipo) {
         this.tipoEquipo = tipoEquipo;
@@ -35,12 +25,6 @@ public class Equipo {
         jugadores.add(jugador);
     }
 
-    public Jugador obtenerLider() {
-        if (jugadores.isEmpty()) {
-            return null;
-        }
-        return jugadores.getFirst();
-    }
 
     public boolean tieneJugador(String idJugador) {
         return jugadores.stream().anyMatch(j -> j.getId().equals(idJugador)); // jugadores.find(idJugador));

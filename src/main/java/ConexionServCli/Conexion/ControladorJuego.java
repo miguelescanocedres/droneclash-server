@@ -70,6 +70,18 @@ public class ControladorJuego {
 
 
 
+    @GetMapping("/hud")
+    public ResponseEntity<?> obtenerDatosHud(@RequestParam String idDron) {
+        try {
+
+            DatosHud datos = ServicioJuego.obtenerDatosHud(idDron);
+            return ResponseEntity.ok(datos);
+        } catch (ReglaJuegoException e) {
+
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
 
 
 
