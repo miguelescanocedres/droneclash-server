@@ -14,16 +14,12 @@ public abstract class Unidad {
     protected int visionRango;
     protected int combustibleMaximo;
     protected int combustibleActual;
-    protected int movimientoUtilizadoTurno; // NO IMPLEMENTADO
-    protected int movimientoMaximo; // NO IMPLEMENTADO,
     protected int recargaPorTurno;
 
     public Unidad(Posicion posicion, Equipo equipo) {
         this.id = UUID.randomUUID().toString();
         this.posicion = posicion;
         this.equipo =   equipo;
-        this.movimientoUtilizadoTurno = 0; // TEMPORAL CREO
-        movimientoMaximo = 4; // TEMPORAL
     }
 
     public void RecargarTurno() {
@@ -37,7 +33,7 @@ public abstract class Unidad {
     }
 
     public boolean SinMovimientos (){
-        return movimientoUtilizadoTurno  >=  movimientoMaximo;
+        return combustibleActual  <=  0;
     }
 
 
