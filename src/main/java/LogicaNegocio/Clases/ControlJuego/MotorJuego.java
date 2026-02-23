@@ -65,6 +65,7 @@ public class MotorJuego {
         partidaActual.getTablero().moverUnidad(dron, origen, destino);
         dron.setPosicion(destino);
         dron.ConsumirCombustible();
+        partidaActual.getReloj().setUnidadActual(dron.getId());
         if(dron.SinMovimientos())
             partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(),partidaActual.getEquipoAzul().getJugadores());
         System.out.println("--- MOVIMIENTO DE DRON COMPLETADO ---");
@@ -89,6 +90,7 @@ public class MotorJuego {
         partidaActual.getTablero().moverUnidad(pd, origen, destino);
         pd.setPosicion(destino);
         pd.ConsumirCombustible();
+        partidaActual.getReloj().setUnidadActual(pd.getId());
         if(pd.SinMovimientos())
             partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(),partidaActual.getEquipoAzul().getJugadores());
     }
@@ -111,6 +113,7 @@ public class MotorJuego {
         atacante.ConsumirCombustible();
         Unidad unidadObjetivo = partidaActual.getTablero().getCelda(targetX, targetY).getUnidad();
         ReglasJuego.AplicarImpacto(atacante,unidadObjetivo,partidaActual);
+        partidaActual.getReloj().setUnidadActual(unidadAtacante.getId());
         if(unidadAtacante.SinMovimientos())
             partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(),partidaActual.getEquipoAzul().getJugadores());
         EvaluarVictoria(); // no estoy seguro si va aca pero creo que no hay otro lugar logico
