@@ -14,8 +14,8 @@ public class EstadoJuego {
     private List<DatosDrone> drones;
     private DatosTablero tablero;
     private int tiempoRestante;
-    private List<int[]> celdasVisibles;
-
+    private String idJugadorActual;
+    private String equipoAsignado;
 
 
 
@@ -84,12 +84,19 @@ public class EstadoJuego {
         this.tiempoRestante = tiempoRestante;
     }
 
-    public List<int[]> getCeldasVisibles() {
-        return celdasVisibles;
+    public String getIdJugadorActual() {
+        return idJugadorActual;
     }
 
-    public void setCeldasVisibles(List<int[]> celdasVisibles) {
-        this.celdasVisibles = celdasVisibles;
+    public void setIdJugadorActual(String idJugadorActual) {
+        this.idJugadorActual = idJugadorActual;
     }
 
+    public String getEquipoAsignado() {
+        return equipoAsignado;
+    }
+
+    public void setEquipoAsignado(String equipoAsignado) {
+        this.equipoAsignado = equipoAsignado;
+    }
 }
