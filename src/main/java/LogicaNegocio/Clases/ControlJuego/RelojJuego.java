@@ -66,9 +66,5 @@ public class RelojJuego {
     public void setUnidadActual(String unidadActual) {
         this.unidadActual = unidadActual;
     }
-
-    public boolean DronValidoParaTomarTurno (String idDron){
-        return unidadActual == null || unidadActual.equals(idDron);
-    }
 }
 

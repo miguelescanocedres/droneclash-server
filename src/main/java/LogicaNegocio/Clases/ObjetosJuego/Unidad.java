@@ -14,7 +14,6 @@ public abstract class Unidad {
     protected int visionRango;
     protected int combustibleMaximo;
     protected int combustibleActual;
-    protected int recargaPorTurno;
 
     public Unidad(Posicion posicion, Equipo equipo) {
         this.id = UUID.randomUUID().toString();
@@ -23,7 +22,7 @@ public abstract class Unidad {
     }
 
     public void RecargarTurno() {
-        combustibleActual = Math.min(combustibleActual + recargaPorTurno, combustibleMaximo);
+        combustibleActual = combustibleMaximo;
     }
 
     public void ConsumirCombustible() {

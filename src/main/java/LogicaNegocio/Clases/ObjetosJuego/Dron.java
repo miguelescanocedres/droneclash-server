@@ -11,7 +11,6 @@ public abstract class Dron extends Unidad {
     public Dron(Posicion posicion, Equipo equipo) {
         super(posicion, equipo);
         combustibleMaximo = 4;
-        recargaPorTurno = 2; // estos dos valores quedan definidos aca por ahora, mas adelante se define si cambia en base al tipo de dron
         combustibleActual = combustibleMaximo;
     }
 
