@@ -32,6 +32,10 @@ public abstract class Unidad {
         }
     }
 
+    public boolean SinMovimientos (){
+        return combustibleActual  <=  0;
+    }
+
 
     public boolean TieneEnergia() {
         return combustibleActual > 0;

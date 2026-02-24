@@ -7,7 +7,6 @@ import LogicaNegocio.Clases.ControlJuego.Partida;
 import LogicaNegocio.Clases.ObjetosJuego.Jugador;
 import LogicaNegocio.Clases.ObjetosJuego.*;
 import LogicaNegocio.Excepciones.ReglaJuegoException;
-import LogicaNegocio.Clases.ControlJuego.Equipo;
 import org.springframework.stereotype.Service;
 import LogicaNegocio.Enums.EstadoPartida;
 import LogicaNegocio.Enums.TipoEquipo;
@@ -107,9 +106,16 @@ public class ServicioJuego {
 
 
     public static EstadoJuego procesarAccion(AccionJuego accion) throws ReglaJuegoException {
+        if(!RequestDeJugadorActual(accion.getIdJugador()))
+            throw new ReglaJuegoException("No es el turno del jugador " + accion.getIdJugador());
+
+        if(!accion.getAccion().equals(ConstantesAcciones.PasarTurno)){
+            if(!RequestDeUnidadValida(accion.getIdDron()))
+                throw new ReglaJuegoException("no se puede utilizar la unidad" + accion.getIdUnidad() + "porque este turno ya se utilizo la unidad" + motorJuego.getPartidaActual().getReloj().getUnidadActual());
+        }
 
         switch (accion.getAccion()) {
-            case "moverDron":
+            case ConstantesAcciones.MoverDron:
                 motorJuego.procesarMoverDron(
                         accion.getIdDron(),
                         accion.getObjetivoY(),
@@ -118,7 +124,7 @@ public class ServicioJuego {
                 System.out.println("INFO: Acción 'moverDron' prxocesada con éxito.");
                 break;
 
-            case "moverPortaDron":
+            case ConstantesAcciones.MoverPortaDron:
                 motorJuego.procesarMoverPortaDrones(
                         accion.getIdPortaDron(),
                         accion.getObjetivoY(),
@@ -127,13 +133,17 @@ public class ServicioJuego {
                 System.out.println("INFO: Acción 'moverPortaDron' procesada con éxito.");
                 break;
 
-            case "dispararDron":
+            case ConstantesAcciones.DispararDron:
                 motorJuego.procesarDispararDron(
                         accion.getIdDron(),
                         accion.getObjetivoY(),
                         accion.getObjetivoX());
                 break;
-
+            case ConstantesAcciones.PasarTurno:
+                motorJuego.getPartidaActual()
+                        .getReloj()
+                        .PasarTurno(motorJuego.getPartidaActual().getEquipoRojo().getJugadores(),
+                                    motorJuego.getPartidaActual().getEquipoAzul().getJugadores());
 
             default:
                 // Si la acción no es conocida, también podemos lanzar una excepción.
@@ -148,8 +158,17 @@ public class ServicioJuego {
 
     }
 
-    public static EstadoJuego obtenerEstadoJuego(TipoEquipo equipo) {
-        return convertirAEstadoJuego(equipo);
+    public static boolean RequestDeJugadorActual (String idJugador){
+        return motorJuego.getPartidaActual().getReloj().getJugadorActual().getId().equals(idJugador);
+    }
+
+    public static boolean RequestDeUnidadValida (String idUnidad){
+        String idUnidadActual = motorJuego.getPartidaActual().getReloj().getUnidadActual();
+        return idUnidadActual == null || idUnidadActual.equals(idUnidad);
+    }
+
+    public static EstadoJuego obtenerEstadoJuego(TipoEquipo equipoActor) {
+        return convertirAEstadoJuego(equipoActor);
     }
 
 
@@ -159,7 +178,7 @@ public class ServicioJuego {
         Partida partidaActual = motorJuego.getPartidaActual();
 
         estadoJuegoDTO.setTurno(partidaActual.getTurno());
-        estadoJuegoDTO.setTiempoRestante(partidaActual.getReloj().getTiempoRestante());
+        estadoJuegoDTO.setTiempoRestante(partidaActual.getReloj().getSegundosRestantes());
         estadoJuegoDTO.setEstadoPartida(partidaActual.getEstado().name());
 
         TipoEquipo ganador = partidaActual.getGanador();
@@ -218,6 +237,9 @@ public class ServicioJuego {
         estadoJuegoDTO.setDrones(dronesDTO);
         estadoJuegoDTO.setPortaDrones(portaDronesDTO);
         estadoJuegoDTO.setTablero(new DatosTablero(FILAS, COLUMNAS, celdasOcupadas));
+        Jugador jugadorTurnoActual = motorJuego.getPartidaActual().getReloj().getJugadorActual();
+        estadoJuegoDTO.setIdJugadorActual(jugadorTurnoActual.getId());
+        estadoJuegoDTO.setEquipoAsignado(jugadorTurnoActual.getEquipo().name());
 
         // Convertir celdas visibles a coordendas API [columna, fila] para el DTO
         if (celdasVisiblesSet != null) {

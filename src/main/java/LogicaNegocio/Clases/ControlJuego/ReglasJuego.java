@@ -3,11 +3,14 @@ package LogicaNegocio.Clases.ControlJuego;
 import LogicaNegocio.Clases.ClasesAuxiliares.Posicion;
 import LogicaNegocio.Clases.ObjetosJuego.*;
 
+import java.time.Duration;
+
 public class ReglasJuego {
     public static final int impactoAereo = 6;
     public static final int impactoNaval = 3;
     public static final int VisionBase = 8;
     public static final double FOVMisil = 0.5;
+    public static final Duration duracionTurno= Duration.ofSeconds(10);
 
     public static boolean ValidarTurno(Jugador jugador, Partida partida) {
         return true;
