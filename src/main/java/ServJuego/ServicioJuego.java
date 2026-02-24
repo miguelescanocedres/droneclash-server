@@ -164,8 +164,8 @@ public class ServicioJuego {
         return idUnidadActual == null || idUnidadActual.equals(idUnidad);
     }
 
-    public static EstadoJuego obtenerEstadoJuego() {
-        return convertirAEstadoJuego();
+    public static EstadoJuego obtenerEstadoJuego(TipoEquipo equipoActor) {
+        return convertirAEstadoJuego(equipoActor);
     }
 
 

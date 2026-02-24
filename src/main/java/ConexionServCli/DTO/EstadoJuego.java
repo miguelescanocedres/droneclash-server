@@ -16,6 +16,7 @@ public class EstadoJuego {
     private int tiempoRestante;
     private String idJugadorActual;
     private String equipoAsignado;
+    private List<int[]> celdasVisibles;
 
 
 
@@ -98,5 +99,14 @@ public class EstadoJuego {
 
     public void setEquipoAsignado(String equipoAsignado) {
         this.equipoAsignado = equipoAsignado;
+    }
+
+
+    public List<int[]> getCeldasVisibles() {
+        return celdasVisibles;
+    }
+
+    public void setCeldasVisibles(List<int[]> celdasVisibles) {
+        this.celdasVisibles = celdasVisibles;
     }
 }
