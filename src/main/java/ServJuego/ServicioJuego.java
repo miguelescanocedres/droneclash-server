@@ -1,6 +1,7 @@
 package ServJuego;
 
 import ConexionServCli.DTO.*;
+import LogicaNegocio.Clases.ControlJuego.Equipo;
 import LogicaNegocio.Clases.ControlJuego.Tablero;
 import LogicaNegocio.Clases.ControlJuego.MotorJuego;
 import LogicaNegocio.Clases.ControlJuego.Partida;
