@@ -239,7 +239,7 @@ public class ServicioJuego {
         estadoJuegoDTO.setPortaDrones(portaDronesDTO);
         estadoJuegoDTO.setTablero(new DatosTablero(FILAS, COLUMNAS, celdasOcupadas));
         Jugador jugadorTurnoActual = null;
-        if(partidaActual.getEstado() != EstadoPartida.EN_CURSO) {
+        if(partidaActual.getEstado() == EstadoPartida.EN_CURSO) {
             jugadorTurnoActual = motorJuego.getPartidaActual().getReloj().getJugadorActual();
             estadoJuegoDTO.setIdJugadorActual(jugadorTurnoActual.getId());
             estadoJuegoDTO.setEquipoAsignado(jugadorTurnoActual.getEquipo().name());
