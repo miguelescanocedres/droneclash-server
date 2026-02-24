@@ -179,7 +179,6 @@ public class ServicioJuego {
         Partida partidaActual = motorJuego.getPartidaActual();
 
         estadoJuegoDTO.setTurno(partidaActual.getTurno());
-        estadoJuegoDTO.setTiempoRestante(partidaActual.getReloj().getSegundosRestantes());
         estadoJuegoDTO.setEstadoPartida(partidaActual.getEstado().name());
 
         TipoEquipo ganador = partidaActual.getGanador();
@@ -243,6 +242,7 @@ public class ServicioJuego {
             jugadorTurnoActual = motorJuego.getPartidaActual().getReloj().getJugadorActual();
             estadoJuegoDTO.setIdJugadorActual(jugadorTurnoActual.getId());
             estadoJuegoDTO.setEquipoAsignado(jugadorTurnoActual.getEquipo().name());
+            estadoJuegoDTO.setTiempoRestante(partidaActual.getReloj().getSegundosRestantes());
         }
 
         // Convertir celdas visibles a coordendas API [columna, fila] para el DTO
