@@ -238,9 +238,12 @@ public class ServicioJuego {
         estadoJuegoDTO.setDrones(dronesDTO);
         estadoJuegoDTO.setPortaDrones(portaDronesDTO);
         estadoJuegoDTO.setTablero(new DatosTablero(FILAS, COLUMNAS, celdasOcupadas));
-        Jugador jugadorTurnoActual = motorJuego.getPartidaActual().getReloj().getJugadorActual();
-        estadoJuegoDTO.setIdJugadorActual(jugadorTurnoActual.getId());
-        estadoJuegoDTO.setEquipoAsignado(jugadorTurnoActual.getEquipo().name());
+        Jugador jugadorTurnoActual = null;
+        if(partidaActual.getEstado() != EstadoPartida.EN_CURSO) {
+            jugadorTurnoActual = motorJuego.getPartidaActual().getReloj().getJugadorActual();
+            estadoJuegoDTO.setIdJugadorActual(jugadorTurnoActual.getId());
+            estadoJuegoDTO.setEquipoAsignado(jugadorTurnoActual.getEquipo().name());
+        }
 
         // Convertir celdas visibles a coordendas API [columna, fila] para el DTO
         if (celdasVisiblesSet != null) {
