@@ -66,8 +66,11 @@ public class MotorJuego {
         dron.setPosicion(destino);
         dron.ConsumirCombustible();
         partidaActual.getReloj().setUnidadActual(dron.getId());
-        if(dron.SinMovimientos())
-            partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(),partidaActual.getEquipoAzul().getJugadores());
+        if(dron.SinMovimientos()) {
+            partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(), partidaActual.getEquipoAzul().getJugadores());
+            dron.RecargarTurno();
+        }
+
         System.out.println("--- MOVIMIENTO DE DRON COMPLETADO ---");
     }
 
@@ -91,8 +94,10 @@ public class MotorJuego {
         pd.setPosicion(destino);
         pd.ConsumirCombustible();
         partidaActual.getReloj().setUnidadActual(pd.getId());
-        if(pd.SinMovimientos())
-            partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(),partidaActual.getEquipoAzul().getJugadores());
+        if(pd.SinMovimientos()) {
+            partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(), partidaActual.getEquipoAzul().getJugadores());
+            pd.RecargarTurno();
+        }
     }
 
     public synchronized void procesarDispararDron (String dronId, int targetX, int targetY) throws  ReglaJuegoException
@@ -114,8 +119,10 @@ public class MotorJuego {
         Unidad unidadObjetivo = partidaActual.getTablero().getCelda(targetX, targetY).getUnidad();
         ReglasJuego.AplicarImpacto(atacante,unidadObjetivo,partidaActual);
         partidaActual.getReloj().setUnidadActual(unidadAtacante.getId());
-        if(unidadAtacante.SinMovimientos())
-            partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(),partidaActual.getEquipoAzul().getJugadores());
+        if(unidadAtacante.SinMovimientos()) {
+            partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(), partidaActual.getEquipoAzul().getJugadores());
+            unidadAtacante.RecargarTurno();
+        }
         EvaluarVictoria(); // no estoy seguro si va aca pero creo que no hay otro lugar logico
     }
 

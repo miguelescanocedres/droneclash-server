@@ -7,6 +7,7 @@ import LogicaNegocio.Enums.TipoEquipo;
 import LogicaNegocio.Excepciones.ReglaJuegoException;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Executors;
@@ -160,6 +161,12 @@ public class Partida {
 
     public void tick() {
         if (reloj.turnoExpirado()) {
+            String idUnidadActual = reloj.getUnidadActual();
+            if(idUnidadActual != null)
+            {
+                Unidad unidadActual = unidadesPorId.get(idUnidadActual);
+                unidadActual.RecargarTurno();
+            }
             reloj.PasarTurno(getEquipoRojo().getJugadores(),getEquipoAzul().getJugadores());
         }
     }
