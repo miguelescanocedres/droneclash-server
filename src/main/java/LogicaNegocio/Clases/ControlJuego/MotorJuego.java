@@ -161,27 +161,10 @@ public class MotorJuego {
         Partida partida = this.partidaActual;
         if (partida.getEstado() != EstadoPartida.EN_CURSO) return;
 
-        long dronesRojo = partida.getUnidadesPorId().values().stream()
-                .filter(u -> u instanceof Dron && u.getEquipo().getTipoEquipo() == TipoEquipo.ROJO_AEREO)
-                .count();
-        long dronesAzul = partida.getUnidadesPorId().values().stream()
-                .filter(u -> u instanceof Dron && u.getEquipo().getTipoEquipo() == TipoEquipo.AZUL_NAVAL)
-                .count();
-
         partida.getReloj().detener();
-
-        if (dronesRojo > dronesAzul) {
-            partida.setGanador(TipoEquipo.ROJO_AEREO);
-            partida.setEstado(EstadoPartida.FINALIZADA);
-            System.out.println("VICTORIA POR TIEMPO: ROJO (" + dronesRojo + " vs " + dronesAzul + ")");
-        } else if (dronesAzul > dronesRojo) {
-            partida.setGanador(TipoEquipo.AZUL_NAVAL);
-            partida.setEstado(EstadoPartida.FINALIZADA);
-            System.out.println("VICTORIA POR TIEMPO: AZUL (" + dronesAzul + " vs " + dronesRojo + ")");
-        } else {
-            partida.setEstado(EstadoPartida.EMPATE);
-            System.out.println("EMPATE: ambos con " + dronesRojo + " drones.");
-        }
+        partida.setEstado(EstadoPartida.EMPATE);
+        System.out.println("EMPATE: se agotó el tiempo de la partida."); // sis se termina el tiempo = empate automatico
     }
+
 
 }
