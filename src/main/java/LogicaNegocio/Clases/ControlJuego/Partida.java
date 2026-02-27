@@ -24,6 +24,7 @@ public class Partida {
     private Map<String, Unidad> unidadesPorId;
     private int turno;
     private RelojJuego reloj;
+    private RelojJuego relojPartida;
     private EstadoPartida estado;
     private TipoEquipo ganador;
 
@@ -34,6 +35,7 @@ public class Partida {
         this.unidadesPorId = new HashMap<>();
         this.turno = 1;
         this.reloj = new RelojJuego();
+        this.relojPartida = new RelojJuego(600); // 10 minutos
         this.estado = EstadoPartida.ESPERANDO_JUGADORES;
     }
 
@@ -85,6 +87,8 @@ public class Partida {
         this.setTurnoActual(TipoEquipo.ROJO_AEREO);
         this.setTurno(1);
         this.reloj.iniciar();
+        this.relojPartida.iniciar();
+
 
     }
 
@@ -177,6 +181,7 @@ public class Partida {
     public TipoEquipo getTurnoActual() { return turnoActual; }
     public void setTurnoActual(TipoEquipo turnoActual) { this.turnoActual = turnoActual; }
     public RelojJuego getReloj() { return reloj; }
+    public RelojJuego getRelojPartida() { return relojPartida; }
     public EstadoPartida getEstado() { return estado; }
     public void setEstado(EstadoPartida estado) { this.estado = estado; }
     public Equipo getEquipoRojo() { return equipoRojo; }

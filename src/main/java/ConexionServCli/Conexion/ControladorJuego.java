@@ -57,7 +57,19 @@ public class ControladorJuego {
         }
     }
 
-
+    @GetMapping("/resultado")
+    public ResponseEntity<?> obtenerResultado() {
+        EstadoJuego estado = ServicioJuego.obtenerEstadoJuego();
+        String estadoPartida = estado.getEstadoPartida();
+        if (!estadoPartida.equals("FINALIZADA") && !estadoPartida.equals("EMPATE")) {
+            return ResponseEntity.badRequest().body("La partida aún no ha terminado.");
+        }
+        String ganador = estado.getGanador() != null ? estado.getGanador() : "EMPATE";
+        return ResponseEntity.ok(java.util.Map.of(
+                "estadoPartida", estadoPartida,
+                "ganador", ganador
+        ));
+    }
 
 
 

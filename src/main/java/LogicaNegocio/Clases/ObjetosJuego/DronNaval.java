@@ -11,7 +11,7 @@ public class DronNaval extends Dron {
         super(posicion, equipo);
         tipoArma = TipoArma.MISIL;
         municion = 2;
-        visionRango = (int) ((int) ReglasJuego.VisionBase / ReglasJuego.FOVMisil);
+        visionRango = ReglasJuego.VisionBaseAzul;
     }
 
 }
