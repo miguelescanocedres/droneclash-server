@@ -12,7 +12,7 @@ public class RelojJuego {
 
     private Instant inicio;
     private TipoEquipo equipoActual;
-    private Jugador jugadorActual;
+    private static Jugador jugadorActual;
     private Jugador jugadorPrevio;
     private String unidadActual; // se utiliza para si ya se movio un dron en este turno, que solo se pueda utilizar ese
 
@@ -22,7 +22,7 @@ public class RelojJuego {
         inicio = Instant.now();
     }
 
-    public Jugador getJugadorActual() { return jugadorActual; }
+    public static Jugador getJugadorActual() { return jugadorActual; }
 
     public void PasarTurno(LinkedList<Jugador> jugadoresRojos,LinkedList<Jugador>  jugadoresAzules) {
 

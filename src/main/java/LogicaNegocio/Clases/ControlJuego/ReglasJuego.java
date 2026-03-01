@@ -117,7 +117,7 @@ public class ReglasJuego {
             return;
         }
 
-        if (atacante.getPropietario().equals(objetivo.getPropietario())) {
+        if (atacante.getEquipoPropietario().equals(objetivo.getEquipoPropietario())) {
             System.out.println("Intento de ataque a una unidad aliada");
             return;
         }

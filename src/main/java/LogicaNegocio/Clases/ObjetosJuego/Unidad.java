@@ -55,4 +55,6 @@ public abstract class Unidad {
     public Equipo getEquipoPropietario() {
         return  this.equipo;
     }
+
+
 }
