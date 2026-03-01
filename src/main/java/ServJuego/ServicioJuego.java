@@ -108,8 +108,9 @@ public class ServicioJuego {
             throw new ReglaJuegoException("No es el turno del jugador " + accion.getIdJugador());
 
         if(!accion.getAccion().equals(ConstantesAcciones.PasarTurno)){
-            if(!RequestDeUnidadValida(accion.getIdDron()))
-                throw new ReglaJuegoException("no se puede utilizar la unidad" + accion.getIdUnidad() + "porque este turno ya se utilizo la unidad" + motorJuego.getPartidaActual().getReloj().getUnidadActual());
+            String idACheckear = accion.getIdDron() == null ? accion.getIdPortaDron() : accion.getIdDron();
+            if(!RequestDeUnidadValida(idACheckear))
+                throw new ReglaJuegoException("no se puede utilizar la unidad" + idACheckear + "porque este turno ya se utilizo la unidad" + motorJuego.getPartidaActual().getReloj().getUnidadActual());
         }
 
         switch (accion.getAccion()) {

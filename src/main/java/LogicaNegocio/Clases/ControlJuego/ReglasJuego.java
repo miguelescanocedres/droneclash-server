@@ -11,7 +11,7 @@ public class ReglasJuego {
     public static final int impactoNaval = 3;
     public static final int VisionBase = 8;
     public static final double FOVMisil = 0.5;
-    public static final Duration duracionTurno= Duration.ofSeconds(10);
+    public static final Duration duracionTurno= Duration.ofSeconds(60);
 
     public static boolean ValidarTurno(Jugador jugador, Partida partida) {
         return true;
