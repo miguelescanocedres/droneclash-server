@@ -1,11 +1,14 @@
 package ConexionServCli.Conexion;
 
-import ConexionServCli.DTO.AccionJuego;
-import ConexionServCli.DTO.EstadoJuego;
+import ConexionServCli.DTO.*;
 import LogicaNegocio.Excepciones.ReglaJuegoException;
 import ServJuego.ServicioJuego;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ConexionServCli.DTO.RespuestaEquipos;
+import LogicaNegocio.Enums.TipoEquipo;
+
+
 
 
 
@@ -18,23 +21,21 @@ public class ControladorJuego {
         // Es la puerta de entrada desde el front el front va a pedir
         // Get......./estado y se ejecuta lo de abajo, el estado de la partida para devolver
     @GetMapping("/estado")
-    public EstadoJuego obtenerEstado(){
-            return ServicioJuego.obtenerEstadoJuego();
-        }
+    public EstadoJuego obtenerEstado(@RequestParam(required = false) String equipo) {
+        TipoEquipo tipo = (equipo != null) ? TipoEquipo.valueOf(equipo) : null;
+        return ServicioJuego.obtenerEstadoJuego(tipo);
+    }
 
-        // POD, el front envia la accion de juego y este la valida
+
+    // POD, el front envia la accion de juego y este la valida
         @PostMapping("/accion")
         public ResponseEntity<?> recibirAccion(@RequestBody AccionJuego accion) {
             System.out.println("Procesando acción: " + accion.getAccion());
-
             try {
-
                 //    Si tiene éxito, devuelve el nuevo estado.
                 EstadoJuego nuevoEstado = ServicioJuego.procesarAccion(accion);
-
                 // Devolvemos el estado con un código  OK.
                 return ResponseEntity.ok(nuevoEstado);
-
             } catch (ReglaJuegoException e) {
                 // Si servidor no valida la accion, aca atrapa el error y lo lanza
                 //Error
@@ -42,7 +43,52 @@ public class ControladorJuego {
                 }
             }
 
-
-
+    @PostMapping("/jugador")
+    public ResponseEntity<?> unirseJugador(@RequestBody SolicitudUnirseJugador solicitud) {
+        try {
+            RespuestaUnirseJugador respuesta = ServicioJuego.unirJugador(solicitud);
+            return ResponseEntity.ok(respuesta);
+        } catch (ReglaJuegoException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @PostMapping("/iniciar")
+    public ResponseEntity<?> iniciarPartida() {
+        try {
+            EstadoJuego estado = ServicioJuego.iniciarPartida();
+            return ResponseEntity.ok(estado);
+        } catch (ReglaJuegoException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/equipos")
+    public ResponseEntity<RespuestaEquipos> obtenerEquipos() {
+        return ResponseEntity.ok(ServicioJuego.obtenerEquipos());
+    }
+
+
+
+    @GetMapping("/hud")
+    public ResponseEntity<?> obtenerDatosHud(@RequestParam String idDron) {
+        try {
+
+            DatosHud datos = ServicioJuego.obtenerDatosHud(idDron);
+            return ResponseEntity.ok(datos);
+        } catch (ReglaJuegoException e) {
+
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
+
+
+
+
+}
+
+
+
+
 

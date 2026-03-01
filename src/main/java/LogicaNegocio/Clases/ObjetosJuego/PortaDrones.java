@@ -1,17 +1,18 @@
 package LogicaNegocio.Clases.ObjetosJuego;
 
 import LogicaNegocio.Clases.ClasesAuxiliares.Posicion;
+import LogicaNegocio.Clases.ControlJuego.Equipo;
 import LogicaNegocio.Enums.EstadoUnidad;
 
 public abstract class PortaDrones extends Unidad {
     protected int vida;
 
-    public PortaDrones(Posicion posicion, Jugador propietario) {
-        super(posicion, propietario);
-        combustibleMaximo = 4;
-        recargaPorTurno = 2;
+    public PortaDrones(Posicion posicion, Equipo equipo) {
+        super(posicion, equipo);
+        combustibleMaximo = 1;
         combustibleActual = combustibleMaximo;
         estado = EstadoUnidad.EN_VUELO;
+        visionRango = 8; // Se puede moidificar el rango
     }
 
     public void RecibirImpacto() {
