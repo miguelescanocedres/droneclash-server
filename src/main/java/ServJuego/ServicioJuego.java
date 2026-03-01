@@ -1,10 +1,7 @@
 package ServJuego;
 
 import ConexionServCli.DTO.*;
-import LogicaNegocio.Clases.ControlJuego.Equipo;
-import LogicaNegocio.Clases.ControlJuego.Tablero;
-import LogicaNegocio.Clases.ControlJuego.MotorJuego;
-import LogicaNegocio.Clases.ControlJuego.Partida;
+import LogicaNegocio.Clases.ControlJuego.*;
 import LogicaNegocio.Clases.ObjetosJuego.Jugador;
 import LogicaNegocio.Clases.ObjetosJuego.*;
 import LogicaNegocio.Excepciones.ReglaJuegoException;
@@ -341,7 +338,7 @@ public class ServicioJuego {
     public static DatosHud obtenerDatosHud(String idDron) throws ReglaJuegoException {
         Partida partidaActual = motorJuego.getPartidaActual();
 
-        String turnoDe = partidaActual.getTurnoActual().name();
+        String turnoDe = RelojJuego.getJugadorActual().getNombre();
 
         Unidad unidadSeleccionada = partidaActual.buscarUnidadPorId(idDron);
         Dron dronSeleccionado = (Dron) unidadSeleccionada;
