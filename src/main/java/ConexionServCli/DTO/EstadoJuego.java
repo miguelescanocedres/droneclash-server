@@ -21,6 +21,8 @@ public class EstadoJuego {
 
 
 
+
+
     public int getTurno() {
         return turno;
     }
