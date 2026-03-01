@@ -1,5 +1,6 @@
 package LogicaNegocio.Clases.ObjetosJuego;
 
+import ConexionServCli.DTO.DatosPortaDron;
 import LogicaNegocio.Clases.ClasesAuxiliares.Posicion;
 import LogicaNegocio.Clases.ControlJuego.Equipo;
 import LogicaNegocio.Enums.EstadoUnidad;
@@ -50,4 +51,8 @@ public abstract class Unidad {
     public int getVisionRango() { return visionRango; }
     public int getCombustibleActual() { return combustibleActual; }
     public int getCombustibleMaximo() { return combustibleMaximo; }
+
+    public Equipo getEquipoPropietario() {
+        return  this.equipo;
+    }
 }

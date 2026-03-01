@@ -1,5 +1,6 @@
 package LogicaNegocio.Clases.ControlJuego;
 
+import ConexionServCli.DTO.EventoCombate;
 import LogicaNegocio.Clases.ClasesAuxiliares.Posicion;
 import LogicaNegocio.Clases.ObjetosJuego.*;
 
@@ -121,10 +122,10 @@ public class ReglasJuego {
             return;
         }
 
-//        if (atacante.getPropietario().equals(objetivo.getPropietario())) {
-//            System.out.println("Intento de ataque a una unidad aliada");
-//            return;
-//        }
+ //     if (atacante.getPropietario().equals(objetivo.getPropietario())) {
+  //       System.out.println("Intento de ataque a una unidad aliada");
+   //    return;
+  //  }
 
         boolean atacanteEsAereo = atacante instanceof DronAereo;
         boolean objetivoEsAereo = objetivo instanceof DronAereo || objetivo instanceof PortaDronesAereo;
@@ -133,19 +134,38 @@ public class ReglasJuego {
             System.out.println("ERROR, Las unidades son del mismo tipo (aire/mar).");
             return;
         }
+//  Variables para construir el EventoCombateDTO
+        String tipoEvento = "IMPACTO";
+        String tipoObjetivoStr = (objetivo instanceof Dron) ? "DRON" : "PORTADRON";
+        int vidaActualObjetivo = 0;
+        String equipoObjetivoStr = objetivo.getEquipoPropietario().getTipo().name();
 
         if (objetivo instanceof Dron) {
             System.out.println("IMPACTO: ¡Dron enemigo destruido!");
             partida.eliminarUnidad(objetivo);
+            tipoEvento = "DRON_DESTRUIDO";
+            vidaActualObjetivo = 0; //DESTRUIDO
         } else if (objetivo instanceof PortaDrones portaDronObjetivo) {
-
             portaDronObjetivo.reducirVida();
+            vidaActualObjetivo = portaDronObjetivo.getVida();
             System.out.println("PortaDrones enemigo dañado.");
 
             if (portaDronObjetivo.getVida() <= 0) {
                 System.out.println("PortaDrones enemigo destruido!");
                 partida.eliminarUnidad(portaDronObjetivo);
+                tipoEvento = "PORTADRON_DESTRUIDO";
+                vidaActualObjetivo = 0;
             }
         }
+        // --- CREAR Y ALMACENAR EL EVENTO DE COMBATE ---
+        EventoCombate evento = new EventoCombate(
+                tipoEvento,
+                atacante.getId(),
+                objetivo.getId(),
+                tipoObjetivoStr,
+                equipoObjetivoStr,
+                vidaActualObjetivo
+        );
+        partida.setUltimoEventoCombate(evento); // Almacena el evento en la partida
     }
 }

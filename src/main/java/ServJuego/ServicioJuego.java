@@ -348,5 +348,10 @@ public class ServicioJuego {
 
         return new DatosHud(turnoDe, municion, equipo);
     }
+     // Obtiene el último evento de combate registrado en la partida.
+
+    public static EventoCombate obtenerUltimoEventoCombate() {
+        return motorJuego.getPartidaActual().getUltimoEventoCombate();
+    }
 
 }

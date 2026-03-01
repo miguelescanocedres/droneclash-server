@@ -1,5 +1,6 @@
 package LogicaNegocio.Clases.ControlJuego;
 
+import ConexionServCli.DTO.EventoCombate;
 import LogicaNegocio.Clases.ClasesAuxiliares.Posicion;
 import LogicaNegocio.Clases.ObjetosJuego.*;
 import LogicaNegocio.Enums.EstadoPartida;
@@ -31,6 +32,7 @@ public class Partida {
     private EstadoPartida estado;
     private TipoEquipo ganador;
     private ScheduledExecutorService scheduler;
+    private EventoCombate ultEventoCombate;
 
     public Partida() {
         this.equipoRojo = new Equipo(TipoEquipo.ROJO_AEREO);
@@ -39,6 +41,7 @@ public class Partida {
         this.unidadesPorId = new HashMap<>();
         this.turno = 1;
         this.estado = EstadoPartida.ESPERANDO_JUGADORES;
+        this.ultEventoCombate = null;
     }
 
     public TipoEquipo agregarJugador(String idJugador) throws ReglaJuegoException {
@@ -217,4 +220,11 @@ public class Partida {
     public TipoEquipo getGanador() { return ganador; }
     public void setGanador(TipoEquipo ganador) { this.ganador = ganador; }
 
+    public void setUltimoEventoCombate(EventoCombate evento) {
+        this.ultEventoCombate = evento;
+    }
+
+    public EventoCombate getUltimoEventoCombate() {
+        return this.ultEventoCombate;
+    }
 }
