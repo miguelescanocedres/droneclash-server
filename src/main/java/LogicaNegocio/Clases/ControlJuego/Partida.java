@@ -227,4 +227,13 @@ public class Partida {
     public EventoCombate getUltimoEventoCombate() {
         return this.ultEventoCombate;
     }
+
+    public PortaDrones getPortaDronEquipo(TipoEquipo equipo){
+        for (Unidad uni : unidadesPorId.values()) {
+            if(uni.getEquipo().getTipoEquipo() == equipo && uni instanceof PortaDrones)
+                return (PortaDrones) uni;
+
+        }
+        return null;
+    }
 }

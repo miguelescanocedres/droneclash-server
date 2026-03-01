@@ -9,7 +9,7 @@ public abstract class PortaDrones extends Unidad {
 
     public PortaDrones(Posicion posicion, Equipo equipo) {
         super(posicion, equipo);
-        combustibleMaximo = 1;
+        combustibleMaximo = 4;
         combustibleActual = combustibleMaximo;
         estado = EstadoUnidad.EN_VUELO;
         visionRango = 8; // Se puede moidificar el rango

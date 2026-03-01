@@ -344,9 +344,11 @@ public class ServicioJuego {
         Dron dronSeleccionado = (Dron) unidadSeleccionada;
 
         int municion = dronSeleccionado.getMunicion();
-        String equipo = dronSeleccionado.getEquipo().getTipoEquipo().name();
+        TipoEquipo tipoEquipo = dronSeleccionado.getEquipo().getTipoEquipo();
+        String equipo = tipoEquipo.name();
+        int vidaPortaDron = partidaActual.getPortaDronEquipo(tipoEquipo).getVida();
 
-        return new DatosHud(turnoDe, municion, equipo);
+        return new DatosHud(turnoDe, municion, equipo,vidaPortaDron);
     }
      // Obtiene el último evento de combate registrado en la partida.
 
