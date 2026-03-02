@@ -11,7 +11,7 @@ public class DronAereo extends Dron {
         super(posicion, equipo);
         tipoArma = TipoArma.BOMBA;
         municion = 1;
-        visionRango = ReglasJuego.VisionBase;
+        visionRango = ReglasJuego.VisionBaseRojo;
     }
 
 

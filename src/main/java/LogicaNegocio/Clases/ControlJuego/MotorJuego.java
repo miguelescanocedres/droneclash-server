@@ -16,6 +16,8 @@ public class MotorJuego {
 
     public MotorJuego() {
         this.partidaActual = new Partida();
+        this.partidaActual.getReloj().setAlAgotarse(this::CambiarTurno);
+        this.partidaActual.getRelojPartida().setAlAgotarse(this::EvaluarVictoriaPorTiempo);
     }
 
 
@@ -154,13 +156,28 @@ public class MotorJuego {
         if (rojoDestruido) {
             partida.setGanador(TipoEquipo.AZUL_NAVAL);
             partida.setEstado(EstadoPartida.FINALIZADA);
-            partida.detenerLoop();
+            partida.getReloj().detener();
+            partida.getRelojPartida().detener();
             System.out.println("¡VICTORIA! El equipo AZUL NAVAL ha ganado la partida.");
         } else if (azulDestruido) {
             partida.setGanador(TipoEquipo.ROJO_AEREO);
             partida.setEstado(EstadoPartida.FINALIZADA);
-            partida.detenerLoop();
+            partida.getReloj().detener();
+            partida.getRelojPartida().detener();
             System.out.println("¡VICTORIA! El equipo ROJO AEREO ha ganado la partida.");
         }
     }
+
+
+    //es pra el tiempo total de partida
+    public void EvaluarVictoriaPorTiempo() {
+        Partida partida = this.partidaActual;
+        if (partida.getEstado() != EstadoPartida.EN_CURSO) return;
+
+        partida.getReloj().detener();
+        partida.setEstado(EstadoPartida.EMPATE);
+        System.out.println("EMPATE: se agotó el tiempo de la partida."); // sis se termina el tiempo = empate automatico
+    }
+
+
 }
