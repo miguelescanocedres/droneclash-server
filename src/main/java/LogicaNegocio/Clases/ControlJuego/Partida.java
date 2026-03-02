@@ -1,5 +1,6 @@
 package LogicaNegocio.Clases.ControlJuego;
 
+import ConexionServCli.DTO.EventoCombate;
 import LogicaNegocio.Clases.ClasesAuxiliares.Posicion;
 import LogicaNegocio.Clases.ObjetosJuego.*;
 import LogicaNegocio.Enums.EstadoPartida;
@@ -7,8 +8,12 @@ import LogicaNegocio.Enums.TipoEquipo;
 import LogicaNegocio.Excepciones.ReglaJuegoException;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Partida {
     private static final int ANCHO_ZONA_DESPLIEGUE = Math.max(1, Tablero.COLUMNAS / 3);
@@ -27,6 +32,8 @@ public class Partida {
     private RelojJuego relojPartida;
     private EstadoPartida estado;
     private TipoEquipo ganador;
+    private ScheduledExecutorService scheduler;
+    private EventoCombate ultEventoCombate;
 
     public Partida() {
         this.equipoRojo = new Equipo(TipoEquipo.ROJO_AEREO);
@@ -37,6 +44,7 @@ public class Partida {
         this.reloj = new RelojJuego();
         this.relojPartida = new RelojJuego(600); // 10 minutos
         this.estado = EstadoPartida.ESPERANDO_JUGADORES;
+        this.ultEventoCombate = null;
     }
 
     public TipoEquipo agregarJugador(String idJugador) throws ReglaJuegoException {
@@ -159,6 +167,17 @@ public class Partida {
         }
     }
 
+    public void tick() {
+        if (reloj.turnoExpirado()) {
+            String idUnidadActual = reloj.getUnidadActual();
+            if(idUnidadActual != null)
+            {
+                Unidad unidadActual = unidadesPorId.get(idUnidadActual);
+                unidadActual.RecargarTurno();
+            }
+            reloj.PasarTurno(getEquipoRojo().getJugadores(),getEquipoAzul().getJugadores());
+        }
+    }
 
     public void registrarUnidad(Unidad unidad) {
         unidadesPorId.put(unidad.getId(), unidad);
@@ -171,6 +190,24 @@ public class Partida {
     public void eliminarUnidad(Unidad unidad) {
         if (unidad != null) {
             unidadesPorId.remove(unidad.getId());
+        }
+    }
+
+    public void iniciarLoop(long intervaloMillis) {
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                tick();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, 0, intervaloMillis, TimeUnit.MILLISECONDS);
+    }
+
+    public void detenerLoop() {
+        if (scheduler != null && !scheduler.isShutdown()) {
+            scheduler.shutdownNow();
         }
     }
 
@@ -189,4 +226,20 @@ public class Partida {
     public TipoEquipo getGanador() { return ganador; }
     public void setGanador(TipoEquipo ganador) { this.ganador = ganador; }
 
+    public void setUltimoEventoCombate(EventoCombate evento) {
+        this.ultEventoCombate = evento;
+    }
+
+    public EventoCombate getUltimoEventoCombate() {
+        return this.ultEventoCombate;
+    }
+
+    public PortaDrones getPortaDronEquipo(TipoEquipo equipo){
+        for (Unidad uni : unidadesPorId.values()) {
+            if(uni.getEquipo().getTipoEquipo() == equipo && uni instanceof PortaDrones)
+                return (PortaDrones) uni;
+
+        }
+        return null;
+    }
 }

@@ -1,118 +1,74 @@
 package LogicaNegocio.Clases.ControlJuego;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import LogicaNegocio.Clases.ObjetosJuego.Jugador;
+import LogicaNegocio.Enums.TipoEquipo;
 
-/**
- * RelojJuego - Controla el tiempo de cada turno en la partida.
- * Usa un Timer de Java que corre en un hilo daemon (no bloquea el cierre de la app).
- * Cada segundo descuenta el tiempo restante, y al llegar a 0 ejecuta un callback
- * para cambiar de turno automáticamente.
- */
+import java.time.Duration;
+import java.time.Instant;
+import java.util.LinkedList;
+
+
 public class RelojJuego {
 
-    // Tiempo por defecto de cada turno en segundos
-    private static final int TIEMPO_TURNO_POR_DEFECTO = 30;
+    private Instant inicio;
+    private TipoEquipo equipoActual;
+    private static Jugador jugadorActual;
+    private Jugador jugadorPrevio;
+    private String unidadActual; // se utiliza para si ya se movio un dron en este turno, que solo se pueda utilizar ese
 
-    // Tiempo configurado para cada turno (puede cambiar si se usa el constructor con parámetro)
-    private int tiempoTurnoPorDefecto;
-
-    // Segundos que quedan en el turno actual
-    private int tiempoRestante;
-
-    // Timer de Java que ejecuta la tarea periódica cada 1 segundo
-    private Timer timer;
-
-    // Indica si el reloj está corriendo
-    private boolean enMarcha;
-
-    // Acción a ejecutar cuando el tiempo llega a 0 (ej: cambiar turno)
-    private Runnable alAgotarse;
-
-    /**
-     * Constructor por defecto: 30 segundos por turno.
-     */
-    public RelojJuego() {
-        this.tiempoTurnoPorDefecto = TIEMPO_TURNO_POR_DEFECTO;
-        this.tiempoRestante = tiempoTurnoPorDefecto;
-        this.enMarcha = false;
+    public RelojJuego (LinkedList<Jugador> jugadoresDeEquipoInicial){
+        jugadorActual = jugadoresDeEquipoInicial.get(0);
+        equipoActual = jugadorActual.getEquipo();
+        inicio = Instant.now();
     }
 
-    /**
-     * Constructor con tiempo personalizado.
-     * @param segundosPorTurno duración de cada turno en segundos.
-     */
-    public RelojJuego(int segundosPorTurno) {
-        this.tiempoTurnoPorDefecto = segundosPorTurno;
-        this.tiempoRestante = tiempoTurnoPorDefecto;
-        this.enMarcha = false;
+    public static Jugador getJugadorActual() { return jugadorActual; }
+
+    public void PasarTurno(LinkedList<Jugador> jugadoresRojos,LinkedList<Jugador>  jugadoresAzules) {
+
+        equipoActual = equipoActual == TipoEquipo.ROJO_AEREO ? TipoEquipo.AZUL_NAVAL : TipoEquipo.ROJO_AEREO;
+
+        LinkedList<Jugador> listaUsar = equipoActual == TipoEquipo.ROJO_AEREO ? jugadoresRojos : jugadoresAzules;
+
+        int indiceActual = jugadorPrevio != null ? listaUsar.indexOf(jugadorPrevio) : 0;
+
+        jugadorPrevio = jugadorActual;
+        jugadorActual = listaUsar.get((indiceActual + 1) % listaUsar.size());
+        unidadActual = null;
+        inicio = Instant.now();
     }
 
-    /**
-     * Configura el callback que se ejecuta cuando el tiempo llega a 0.
-     * Esto permite que MotorJuego pase su método CambiarTurno() como acción.
-     */
-    public void setAlAgotarse(Runnable alAgotarse) {
-        this.alAgotarse = alAgotarse;
+    public boolean turnoExpirado (){
+        return Instant.now().isAfter(inicio.plus(ReglasJuego.duracionTurno));
     }
 
-    /**
-     * Inicia el conteo regresivo.
-     * Crea un TimerTask que cada 1 segundo descuenta tiempoRestante.
-     * Si ya está en marcha, no hace nada (evita duplicar timers).
-     */
-    public void iniciar() {
-        if (enMarcha) {
-            return;
+
+    public int getSegundosRestantes() {
+        Duration restante = getTiempoRestante();
+        return Math.max(0, (int) restante.getSeconds());
+    }
+
+    private Duration getTiempoRestante() {
+        Instant finTurno = inicio.plus(ReglasJuego.duracionTurno);
+        Instant ahora = Instant.now();
+
+        if (ahora.isAfter(finTurno)) {
+            return Duration.ZERO;
         }
-        enMarcha = true;
-        // daemon=true para que el timer no impida cerrar la aplicación
-        timer = new Timer(true);
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                if (tiempoRestante > 0) {
-                    tiempoRestante--;
-                } else {
-                    detener();
-                    // Ejecuta la acción configurada (ej: cambiar turno)
-                    if (alAgotarse != null) {
-                        alAgotarse.run();
-                    }
-                }
-            }
-        }, 1000, 1000); // espera 1s antes de empezar, repite cada 1s
+
+        return Duration.between(ahora, finTurno);
     }
 
-    /**
-     * Detiene el reloj. Cancela el timer y libera recursos.
-     */
-    public void detener() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-        enMarcha = false;
+    public String getUnidadActual() {
+        return unidadActual;
     }
 
-    /**
-     * Reinicia el reloj: resetea el tiempo al valor por defecto y arranca de nuevo.
-     * Se usa cada vez que cambia el turno.
-     */
-    public void reiniciar() {
-        detener();
-        tiempoRestante = tiempoTurnoPorDefecto;
-        iniciar();
+    public void setUnidadActual(String unidadActual) {
+        this.unidadActual = unidadActual;
     }
 
-    // --- Getters ---
-
-    public int getTiempoRestante() {
-        return tiempoRestante;
-    }
-
-    public boolean isEnMarcha() {
-        return enMarcha;
+    public boolean DronValidoParaTomarTurno (String idDron){
+        return unidadActual == null || unidadActual.equals(idDron);
     }
 }
 

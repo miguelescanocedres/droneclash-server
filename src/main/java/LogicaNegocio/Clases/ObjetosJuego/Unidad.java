@@ -1,5 +1,6 @@
 package LogicaNegocio.Clases.ObjetosJuego;
 
+import ConexionServCli.DTO.DatosPortaDron;
 import LogicaNegocio.Clases.ClasesAuxiliares.Posicion;
 import LogicaNegocio.Clases.ControlJuego.Equipo;
 import LogicaNegocio.Enums.EstadoUnidad;
@@ -14,7 +15,6 @@ public abstract class Unidad {
     protected int visionRango;
     protected int combustibleMaximo;
     protected int combustibleActual;
-    protected int recargaPorTurno;
 
     public Unidad(Posicion posicion, Equipo equipo) {
         this.id = UUID.randomUUID().toString();
@@ -23,13 +23,17 @@ public abstract class Unidad {
     }
 
     public void RecargarTurno() {
-        combustibleActual = Math.min(combustibleActual + recargaPorTurno, combustibleMaximo);
+        combustibleActual = combustibleMaximo;
     }
 
     public void ConsumirCombustible() {
         if (combustibleActual > 0) {
             combustibleActual--;
         }
+    }
+
+    public boolean SinMovimientos (){
+        return combustibleActual  <=  0;
     }
 
 
@@ -47,4 +51,10 @@ public abstract class Unidad {
     public int getVisionRango() { return visionRango; }
     public int getCombustibleActual() { return combustibleActual; }
     public int getCombustibleMaximo() { return combustibleMaximo; }
+
+    public Equipo getEquipoPropietario() {
+        return  this.equipo;
+    }
+
+
 }

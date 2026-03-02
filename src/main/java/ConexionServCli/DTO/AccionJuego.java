@@ -7,6 +7,7 @@ public class AccionJuego {
     private String accion; // "moverDron", "moverPortaDron", etc.
     private String idJugador;
     private String idDron;
+    private String idUnidad;
     private Integer objetivoX;
     private Integer objetivoY;
     private String idPortaDron;
@@ -67,5 +68,13 @@ public class AccionJuego {
 
     public void setCarga(String carga) {
         this.carga = carga;
+    }
+
+    public String getIdUnidad() {
+        return idUnidad;
+    }
+
+    public void setIdUnidad(String idUnidad) {
+        this.idUnidad = idUnidad;
     }
 }

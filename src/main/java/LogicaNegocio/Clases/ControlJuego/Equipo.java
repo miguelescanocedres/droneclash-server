@@ -3,6 +3,7 @@ package LogicaNegocio.Clases.ControlJuego;
 import LogicaNegocio.Clases.ObjetosJuego.Jugador;
 import LogicaNegocio.Clases.ObjetosJuego.PortaDrones;
 import LogicaNegocio.Enums.TipoEquipo;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 
 import java.util.LinkedList;
 
@@ -12,18 +13,8 @@ public class Equipo {
     PortaDrones portaDrones;
     boolean listoParaJugar = false;
 
-    public void generarFlota(TipoEquipo tipo){
 
-    }
 
-    public void distribuirUnidadesEntreJugadores(){
-
-    }
-    public Jugador ObtenerLider (){
-        return new Jugador();
-    }
-
-    //No toque las clases del Tino pero creo que no las necesitamos
 
     public Equipo(TipoEquipo tipoEquipo) {
         this.tipoEquipo = tipoEquipo;
@@ -35,15 +26,9 @@ public class Equipo {
         jugadores.add(jugador);
     }
 
-    public Jugador obtenerLider() {
-        if (jugadores.isEmpty()) {
-            return null;
-        }
-        return jugadores.getFirst();
-    }
 
     public boolean tieneJugador(String idJugador) {
-        return false; // jugadores.find(idJugador));
+        return jugadores.stream().anyMatch(j -> j.getId().equals(idJugador)); // jugadores.find(idJugador));
     }
 
     public int getCantidadJugadores() {
@@ -54,4 +39,8 @@ public class Equipo {
     public LinkedList<Jugador> getJugadores() { return jugadores; }
     public PortaDrones getPortaDrones() { return portaDrones; }
     public void setPortaDrones(PortaDrones portaDrones) { this.portaDrones = portaDrones; }
+
+    public TipoEquipo  getTipo() {
+        return this.tipoEquipo;
+    }
 }
