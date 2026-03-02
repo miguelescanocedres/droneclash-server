@@ -41,8 +41,6 @@ public class Partida {
         this.tablero = new Tablero();
         this.unidadesPorId = new HashMap<>();
         this.turno = 1;
-        this.reloj = new RelojJuego();
-        this.relojPartida = new RelojJuego(600); // 10 minutos
         this.estado = EstadoPartida.ESPERANDO_JUGADORES;
         this.ultEventoCombate = null;
     }
@@ -81,6 +79,7 @@ public class Partida {
         this.tablero.colocarUnidad(portaRojo, posPortaRojo);
         equipoRojo.setPortaDrones(portaRojo);
         generarDronesAlrededor(portaRojo, equipoRojo);
+        this.reloj = new RelojJuego(equipoRojo.getJugadores());
 
         //  Colocación del equipo AZUL
         Posicion posPortaAzul = generarPosicionAleatoriaEnZona(TipoEquipo.AZUL_NAVAL);
@@ -94,8 +93,6 @@ public class Partida {
         this.setEstado(EstadoPartida.EN_CURSO);
         this.setTurnoActual(TipoEquipo.ROJO_AEREO);
         this.setTurno(1);
-        this.reloj.iniciar();
-        this.relojPartida.iniciar();
 
 
     }

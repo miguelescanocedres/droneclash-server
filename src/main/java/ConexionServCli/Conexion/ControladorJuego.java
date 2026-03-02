@@ -65,7 +65,7 @@ public class ControladorJuego {
 
     @GetMapping("/resultado")
     public ResponseEntity<?> obtenerResultado() {
-        EstadoJuego estado = ServicioJuego.obtenerEstadoJuego();
+        EstadoJuego estado = ServicioJuego.obtenerEstadoJuego(null);
         String estadoPartida = estado.getEstadoPartida();
         if (!estadoPartida.equals("FINALIZADA") && !estadoPartida.equals("EMPATE")) {
             return ResponseEntity.badRequest().body("La partida aún no ha terminado.");
@@ -76,8 +76,11 @@ public class ControladorJuego {
                 "ganador", ganador
         ));
     }
-  
 
+    @GetMapping("/equipos")
+    public ResponseEntity<RespuestaEquipos> obtenerEquipos() {
+        return ResponseEntity.ok(ServicioJuego.obtenerEquipos());
+    }
 
     @GetMapping("/hud")
     public ResponseEntity<?> obtenerDatosHud(@RequestParam String idDron) {
@@ -102,7 +105,6 @@ public class ControladorJuego {
 
     }
 }
-
 
 
 

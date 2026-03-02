@@ -11,6 +11,8 @@ public class ReglasJuego {
     public static final int impactoNaval = 3;
     public static final int VisionBaseRojo = 6; //Cambia vision drones aereos
     public static final int VisionBaseAzul = 3; //Cambia vision drones navales
+    public static final Duration duracionTurno= Duration.ofSeconds(10);
+
 
     public static boolean ValidarTurno(Jugador jugador, Partida partida) {
         return true;
@@ -121,10 +123,10 @@ public class ReglasJuego {
             return;
         }
 
- //     if (atacante.getPropietario().equals(objetivo.getPropietario())) {
-  //       System.out.println("Intento de ataque a una unidad aliada");
-   //    return;
-  //  }
+        //     if (atacante.getPropietario().equals(objetivo.getPropietario())) {
+        //       System.out.println("Intento de ataque a una unidad aliada");
+        //    return;
+        //  }
 
         boolean atacanteEsAereo = atacante instanceof DronAereo;
         boolean objetivoEsAereo = objetivo instanceof DronAereo || objetivo instanceof PortaDronesAereo;
