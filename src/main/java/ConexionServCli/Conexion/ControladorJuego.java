@@ -104,6 +104,14 @@ public class ControladorJuego {
         }
 
     }
+
+
+
+    @PostMapping ("/reiniciar")
+    public ResponseEntity<Boolean> reiniciarEstadoPartida( ) {
+            ServicioJuego.ReiniciarPartida();
+            return ResponseEntity.ok(true);
+    }
 }
 
 

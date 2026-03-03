@@ -24,6 +24,10 @@ public class RelojJuego {
 
     public static Jugador getJugadorActual() { return jugadorActual; }
 
+    public static void reiniciarJugadorActual() {
+        jugadorActual = null;
+    }
+
     public void PasarTurno(LinkedList<Jugador> jugadoresRojos,LinkedList<Jugador>  jugadoresAzules) {
 
         equipoActual = equipoActual == TipoEquipo.ROJO_AEREO ? TipoEquipo.AZUL_NAVAL : TipoEquipo.ROJO_AEREO;
@@ -71,4 +75,3 @@ public class RelojJuego {
         return unidadActual == null || unidadActual.equals(idDron);
     }
 }
-

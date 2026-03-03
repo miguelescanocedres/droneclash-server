@@ -19,10 +19,12 @@ import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
 
+import static LogicaNegocio.Enums.EstadoPartida.ESPERANDO_JUGADORES;
+
 @Service
 public class ServicioJuego {
 
-    private static MotorJuego motorJuego;
+    private static volatile MotorJuego motorJuego;
     private static final int FILAS = Tablero.FILAS;
     private static final int COLUMNAS = Tablero.COLUMNAS;
     private static final int SEGUNDOS_CUENTA_REGRESIVA_INICIO = 30;
@@ -288,7 +290,7 @@ public class ServicioJuego {
     }
 
     private static int calcularSegundosRestantesInicio(Partida partida) {
-        if (partida.getEstado() != EstadoPartida.ESPERANDO_JUGADORES) {
+        if (partida.getEstado() != ESPERANDO_JUGADORES) {
             cuentaRegresivaFinMs = -1L;
             return 0;
         }
@@ -355,6 +357,17 @@ public class ServicioJuego {
 
     public static EventoCombate obtenerUltimoEventoCombate() {
         return motorJuego.getPartidaActual().getUltimoEventoCombate();
+    }
+
+
+    public static void ReiniciarPartida(){
+        if (motorJuego != null && motorJuego.getPartidaActual() != null) {
+            motorJuego.getPartidaActual().detenerLoop();
+        }
+
+        motorJuego = new MotorJuego();
+        RelojJuego.reiniciarJugadorActual();
+        cuentaRegresivaFinMs = -1L;
     }
 
 }
