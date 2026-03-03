@@ -145,7 +145,7 @@ public class ServicioJuego {
                         .getReloj()
                         .PasarTurno(motorJuego.getPartidaActual().getEquipoRojo().getJugadores(),
                                     motorJuego.getPartidaActual().getEquipoAzul().getJugadores());
-
+                break;
             default:
                 // Si la acción no es conocida, también podemos lanzar una excepción.
                 throw new ReglaJuegoException("Acción desconocida o no implementada: " + accion.getAccion());
@@ -226,7 +226,9 @@ public class ServicioJuego {
                 datosPortaDron.setY(portaDron.getPosicion().getX());
                 datosPortaDron.setVida(portaDron.getVida());
                 datosPortaDron.setRangoVision(portaDron.getVisionRango());
+                datosPortaDron.setCombustible(portaDron.getCombustibleActual());
                 portaDronesDTO.add(datosPortaDron);
+
 
                 celdasOcupadas.add(new DatosCelda(
                         portaDron.getPosicion().getX(), portaDron.getPosicion().getY(),
