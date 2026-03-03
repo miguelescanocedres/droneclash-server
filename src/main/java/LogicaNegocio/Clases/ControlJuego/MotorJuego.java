@@ -163,4 +163,8 @@ public class MotorJuego {
             System.out.println("¡VICTORIA! El equipo ROJO AEREO ha ganado la partida.");
         }
     }
+
+    public void sobreEscribirPartida (Partida partida) {
+        this.partidaActual = partida;
+    }
 }

@@ -70,5 +70,9 @@ public class RelojJuego {
     public boolean DronValidoParaTomarTurno (String idDron){
         return unidadActual == null || unidadActual.equals(idDron);
     }
+
+    public TipoEquipo getEquipoActual() {return equipoActual;}
+    public void setEquipoActual(TipoEquipo equipoActual) {this.equipoActual = equipoActual;}
+
 }
 

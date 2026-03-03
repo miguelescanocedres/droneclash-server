@@ -23,4 +23,5 @@ public abstract class Dron extends Unidad {
 
     public TipoArma getTipoArma() { return tipoArma; }
     public int getMunicion() { return municion; }
+    public void setMunicionPersistencia(int m) { this.municion = m; }
 }
