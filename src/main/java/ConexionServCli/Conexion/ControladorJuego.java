@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ConexionServCli.DTO.RespuestaEquipos;
 import LogicaNegocio.Enums.TipoEquipo;
 
-
-
+import javax.swing.plaf.multi.MultiLabelUI;
 
 
 @RestController
@@ -104,6 +103,18 @@ public class ControladorJuego {
         }
 
     }
+
+    @GetMapping("/guardar")
+    public ResponseEntity<?> GuardarPartida(@RequestParam String idJugador){
+        boolean guardo = ServicioJuego.guardarPartida(idJugador);
+        return ResponseEntity.ok(guardo);
+    }
+    @GetMapping("/cargar")
+    public ResponseEntity<?> CargarPartida(@RequestParam long idPartida){
+        boolean cargo = ServicioJuego.cargarPartida(idPartida);
+        return ResponseEntity.ok(null);
+    }
+}
 
 
 

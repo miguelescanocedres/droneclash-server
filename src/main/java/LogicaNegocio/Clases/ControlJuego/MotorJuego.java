@@ -164,16 +164,7 @@ public class MotorJuego {
         }
     }
 
-
-    //es pra el tiempo total de partida
-    public void EvaluarVictoriaPorTiempo() {
-        Partida partida = this.partidaActual;
-        if (partida.getEstado() != EstadoPartida.EN_CURSO) return;
-
-        partida.detenerLoop();
-        partida.setEstado(EstadoPartida.EMPATE);
-        System.out.println("EMPATE: se agotó el tiempo de la partida."); // sis se termina el tiempo = empate automatico
+    public void sobreEscribirPartida (Partida partida) {
+        this.partidaActual = partida;
     }
-
-
 }

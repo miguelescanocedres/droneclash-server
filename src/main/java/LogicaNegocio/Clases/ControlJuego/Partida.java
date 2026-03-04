@@ -34,6 +34,8 @@ public class Partida {
     private TipoEquipo ganador;
     private ScheduledExecutorService scheduler;
     private EventoCombate ultEventoCombate;
+    private TipoEquipo equipoQueArranca;
+    private boolean partidaCargada;
 
     public Partida() {
         this.equipoRojo = new Equipo(TipoEquipo.ROJO_AEREO);
@@ -43,6 +45,20 @@ public class Partida {
         this.turno = 1;
         this.estado = EstadoPartida.ESPERANDO_JUGADORES;
         this.ultEventoCombate = null;
+        this.equipoQueArranca = Math.random() > 0.5 ? TipoEquipo.ROJO_AEREO : TipoEquipo.AZUL_NAVAL;
+        partidaCargada = false;
+    }
+
+    public Partida(TipoEquipo trunoActual) { // SOLO PARA PERSISTENCIA
+        this.equipoRojo = new Equipo(TipoEquipo.ROJO_AEREO);
+        this.equipoAzul = new Equipo(TipoEquipo.AZUL_NAVAL);
+        this.tablero = new Tablero();
+        this.unidadesPorId = new HashMap<>();
+        this.turno = 1;
+        this.estado = EstadoPartida.ESPERANDO_JUGADORES;
+        this.ultEventoCombate = null;
+        this.equipoQueArranca = trunoActual;
+        this.partidaCargada = true;
     }
 
     public TipoEquipo agregarJugador(String idJugador) throws ReglaJuegoException {
@@ -91,10 +107,27 @@ public class Partida {
 
         // Cambiar el estado de la partida
         this.setEstado(EstadoPartida.EN_CURSO);
-        this.setTurnoActual(TipoEquipo.ROJO_AEREO);
+
+        Equipo equipoQueArranca = this.equipoQueArranca == TipoEquipo.ROJO_AEREO ? equipoRojo : equipoAzul;
+        this.setTurnoActual(this.equipoQueArranca);
         this.setTurno(1);
+        this.reloj = new RelojJuego(equipoQueArranca.getJugadores());
+        iniciarLoop(100);
+    }
 
+    public void IniciarPartidaCargada() throws ReglaJuegoException {
+        if (estado != EstadoPartida.ESPERANDO_JUGADORES) {
+            throw new ReglaJuegoException("La partida ya fue iniciada.");
+        }
+        if (equipoRojo.getCantidadJugadores() == 0 || equipoAzul.getCantidadJugadores() == 0) {
+            throw new ReglaJuegoException("No hay suficientes jugadores para iniciar la partida.");
+        }
 
+        Equipo equipoQueArranca = this.equipoQueArranca == TipoEquipo.ROJO_AEREO ? equipoRojo : equipoAzul;
+        this.setTurnoActual(this.equipoQueArranca);
+        this.setTurno(1);
+        this.reloj = new RelojJuego(equipoQueArranca.getJugadores());
+        iniciarLoop(100);
     }
 
     private Posicion generarPosicionAleatoriaEnZona(TipoEquipo equipo) {
@@ -240,7 +273,19 @@ public class Partida {
         return null;
     }
 
+    public TipoEquipo getEquipoQueArranca() {
+        return equipoQueArranca;
+    }
 
+    public void setEquipoQueArranca(TipoEquipo equipoQueArranca) {
+        this.equipoQueArranca = equipoQueArranca;
+    }
 
+    public boolean isPartidaCargada() {
+        return partidaCargada;
+    }
 
+    public void setPartidaCargada(boolean partidaCargada) {
+        this.partidaCargada = partidaCargada;
+    }
 }

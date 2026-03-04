@@ -1,5 +1,6 @@
 package ServJuego;
 
+import ConexionServCli.Conexion.Persistencia.PartidaService;
 import ConexionServCli.DTO.*;
 import LogicaNegocio.Clases.ControlJuego.*;
 import LogicaNegocio.Clases.ObjetosJuego.Jugador;
@@ -24,7 +25,7 @@ import static LogicaNegocio.Enums.EstadoPartida.ESPERANDO_JUGADORES;
 @Service
 public class ServicioJuego {
 
-    private static volatile MotorJuego motorJuego;
+    private static MotorJuego  motorJuego;
     private static final int FILAS = Tablero.FILAS;
     private static final int COLUMNAS = Tablero.COLUMNAS;
     private static final int SEGUNDOS_CUENTA_REGRESIVA_INICIO = 30;
@@ -97,8 +98,10 @@ public class ServicioJuego {
         if (partida.getEstado() == EstadoPartida.FINALIZADA) {
             throw new ReglaJuegoException("La partida ya fue finalizada.");
         }
-
-        motorJuego.iniciarJuego();
+        if(!motorJuego.getPartidaActual().isPartidaCargada())
+            partida.iniciarPartida();
+        else
+            partida.IniciarPartidaCargada();
         cuentaRegresivaFinMs = -1L;
         return obtenerEstadoJuego(null);
     }
@@ -366,15 +369,37 @@ public class ServicioJuego {
         return motorJuego.getPartidaActual().getUltimoEventoCombate();
     }
 
+    public static boolean guardarPartida(String idJugador){
+        try
+        {
+            if(motorJuego.getPartidaActual().getReloj().getUnidadActual() != null)
+                return false;
 
-    public static void ReiniciarPartida(){
-        if (motorJuego != null && motorJuego.getPartidaActual() != null) {
-            motorJuego.getPartidaActual().detenerLoop();
+            PartidaService service = new PartidaService();
+
+            service.guardarPartida(motorJuego.getPartidaActual());
+
+            return true;
+
+        }catch (Exception ex)
+        {
+            return false;
         }
+    }
 
-        motorJuego = new MotorJuego();
-        RelojJuego.reiniciarJugadorActual();
-        cuentaRegresivaFinMs = -1L;
+    public static boolean cargarPartida(long id) {
+        PartidaService service = new PartidaService();
+        try {
+            Partida partidaCargada = service.cargarPartida(id);
+            if(partidaCargada != null) {
+                motorJuego.sobreEscribirPartida(partidaCargada);
+                return true;
+            }
+           return false;
+
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

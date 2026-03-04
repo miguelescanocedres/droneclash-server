@@ -30,4 +30,5 @@ public abstract class PortaDrones extends Unidad {
     }
 
     public int getVida() { return vida; }
+    public void setVidaPersistencia(int v) { this.vida = v; }
 }

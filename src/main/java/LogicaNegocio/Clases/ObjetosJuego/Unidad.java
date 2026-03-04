@@ -51,6 +51,9 @@ public abstract class Unidad {
     public int getVisionRango() { return visionRango; }
     public int getCombustibleActual() { return combustibleActual; }
     public int getCombustibleMaximo() { return combustibleMaximo; }
+    public void setIdPersistencia(String id) { this.id = id; }
+    public void setEquipoPersistencia(Equipo equipo) { this.equipo = equipo; }
+    public void setCombustibleActualPersistencia(int v) { this.combustibleActual = v; }
 
     public Equipo getEquipoPropietario() {
         return  this.equipo;
