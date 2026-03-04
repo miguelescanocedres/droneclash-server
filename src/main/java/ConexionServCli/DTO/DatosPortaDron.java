@@ -13,6 +13,7 @@ public class DatosPortaDron {
     private int y;
     private int vida;
     private int rangoVision;
+    private int combustible;
 
     // Getters y Setters
     public String getId() {
@@ -69,5 +70,10 @@ public class DatosPortaDron {
 
     public void setRangoVision(int rangoVision) {
         this.rangoVision = rangoVision;
+    }
+    public int getCombustible() {return combustible;}
+
+    public void setCombustible(int combustible) {
+        this.combustible = combustible;
     }
 }

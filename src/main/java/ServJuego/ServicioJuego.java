@@ -20,6 +20,8 @@ import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
 
+import static LogicaNegocio.Enums.EstadoPartida.ESPERANDO_JUGADORES;
+
 @Service
 public class ServicioJuego {
 
@@ -146,7 +148,7 @@ public class ServicioJuego {
                         .getReloj()
                         .PasarTurno(motorJuego.getPartidaActual().getEquipoRojo().getJugadores(),
                                     motorJuego.getPartidaActual().getEquipoAzul().getJugadores());
-
+                break;
             default:
                 // Si la acción no es conocida, también podemos lanzar una excepción.
                 throw new ReglaJuegoException("Acción desconocida o no implementada: " + accion.getAccion());
@@ -227,7 +229,9 @@ public class ServicioJuego {
                 datosPortaDron.setY(portaDron.getPosicion().getX());
                 datosPortaDron.setVida(portaDron.getVida());
                 datosPortaDron.setRangoVision(portaDron.getVisionRango());
+                datosPortaDron.setCombustible(portaDron.getCombustibleActual());
                 portaDronesDTO.add(datosPortaDron);
+
 
                 celdasOcupadas.add(new DatosCelda(
                         portaDron.getPosicion().getX(), portaDron.getPosicion().getY(),
@@ -291,7 +295,7 @@ public class ServicioJuego {
     }
 
     private static int calcularSegundosRestantesInicio(Partida partida) {
-        if (partida.getEstado() != EstadoPartida.ESPERANDO_JUGADORES) {
+        if (partida.getEstado() != ESPERANDO_JUGADORES) {
             cuentaRegresivaFinMs = -1L;
             return 0;
         }
@@ -350,9 +354,14 @@ public class ServicioJuego {
         int municion = dronSeleccionado.getMunicion();
         TipoEquipo tipoEquipo = dronSeleccionado.getEquipo().getTipoEquipo();
         String equipo = tipoEquipo.name();
-        int vidaPortaDron = partidaActual.getPortaDronEquipo(tipoEquipo).getVida();
 
-        return new DatosHud(turnoDe, municion, equipo,vidaPortaDron);
+        PortaDrones portaDron = partidaActual.getPortaDronEquipo(tipoEquipo);
+        int vidaPortaDron = portaDron.getVida();
+        int movimientosDron = dronSeleccionado.getCombustibleActual();
+        int movimientosPortaDron = portaDron.getCombustibleActual();
+
+
+        return new DatosHud(turnoDe, municion, equipo, vidaPortaDron, movimientosDron, movimientosPortaDron);
     }
      // Obtiene el último evento de combate registrado en la partida.
 

@@ -19,10 +19,6 @@ public class EstadoJuego {
     private List<int[]> celdasVisibles;
 
 
-
-
-
-
     public int getTurno() {
         return turno;
     }

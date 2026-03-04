@@ -12,7 +12,7 @@ public abstract class PortaDrones extends Unidad {
         combustibleMaximo = 4;
         combustibleActual = combustibleMaximo;
         estado = EstadoUnidad.EN_VUELO;
-        visionRango = 8; // Se puede moidificar el rangoz
+        visionRango = 4; // Se puede moidificar el rangoz
     }
 
     public void RecibirImpacto() {

@@ -29,6 +29,7 @@ public class Partida {
     private Map<String, Unidad> unidadesPorId;
     private int turno;
     private RelojJuego reloj;
+    private RelojJuego relojPartida;
     private EstadoPartida estado;
     private TipoEquipo ganador;
     private ScheduledExecutorService scheduler;
@@ -94,6 +95,7 @@ public class Partida {
         this.tablero.colocarUnidad(portaRojo, posPortaRojo);
         equipoRojo.setPortaDrones(portaRojo);
         generarDronesAlrededor(portaRojo, equipoRojo);
+        this.reloj = new RelojJuego(equipoRojo.getJugadores());
 
         //  Colocación del equipo AZUL
         Posicion posPortaAzul = generarPosicionAleatoriaEnZona(TipoEquipo.AZUL_NAVAL);
@@ -246,6 +248,7 @@ public class Partida {
     public TipoEquipo getTurnoActual() { return turnoActual; }
     public void setTurnoActual(TipoEquipo turnoActual) { this.turnoActual = turnoActual; }
     public RelojJuego getReloj() { return reloj; }
+    public RelojJuego getRelojPartida() { return relojPartida; }
     public EstadoPartida getEstado() { return estado; }
     public void setEstado(EstadoPartida estado) { this.estado = estado; }
     public Equipo getEquipoRojo() { return equipoRojo; }
