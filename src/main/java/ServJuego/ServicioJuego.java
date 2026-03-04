@@ -369,6 +369,16 @@ public class ServicioJuego {
         return motorJuego.getPartidaActual().getUltimoEventoCombate();
     }
 
+    public static void ReiniciarPartida(){
+        if (motorJuego != null && motorJuego.getPartidaActual() != null) {
+            motorJuego.getPartidaActual().detenerLoop();
+        }
+
+        motorJuego = new MotorJuego();
+        RelojJuego.reiniciarJugadorActual();
+        cuentaRegresivaFinMs = -1L;
+    }
+
     public static boolean guardarPartida(String idJugador){
         try
         {

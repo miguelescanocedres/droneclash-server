@@ -114,14 +114,11 @@ public class ControladorJuego {
         boolean cargo = ServicioJuego.cargarPartida(idPartida);
         return ResponseEntity.ok(null);
     }
-}
 
-
-
-    @PostMapping ("/reiniciar")
-    public ResponseEntity<Boolean> reiniciarEstadoPartida( ) {
-            ServicioJuego.ReiniciarPartida();
-            return ResponseEntity.ok(true);
+    @PostMapping("/reiniciar")
+    public ResponseEntity<Boolean> reiniciarEstadoPartida() {
+        ServicioJuego.ReiniciarPartida();
+        return ResponseEntity.ok(true);
     }
 }
 
