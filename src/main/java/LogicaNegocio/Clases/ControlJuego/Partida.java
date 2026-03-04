@@ -36,6 +36,8 @@ public class Partida {
     private EventoCombate ultEventoCombate;
     private TipoEquipo equipoQueArranca;
     private boolean partidaCargada;
+    private TipoEquipo equipoConTurnoAdicional = null;
+
 
     public Partida() {
         this.equipoRojo = new Equipo(TipoEquipo.ROJO_AEREO);
@@ -220,6 +222,10 @@ public class Partida {
     public void eliminarUnidad(Unidad unidad) {
         if (unidad != null) {
             unidadesPorId.remove(unidad.getId());
+            Posicion pos = unidad.getPosicion(); // faltaba esto para liberar la celda
+            if (pos != null) {
+                tablero.getCelda(pos.getX(), pos.getY()).removerUnidad();
+            }
         }
     }
 
@@ -288,4 +294,8 @@ public class Partida {
     public void setPartidaCargada(boolean partidaCargada) {
         this.partidaCargada = partidaCargada;
     }
+
+    public TipoEquipo getEquipoConTurnoAdicional() { return equipoConTurnoAdicional; }
+    public void setEquipoConTurnoAdicional(TipoEquipo equipo) { this.equipoConTurnoAdicional = equipo; }
+
 }

@@ -42,17 +42,24 @@ public class RelojJuego {
         inicio = Instant.now();
     }
 
-    public boolean turnoExpirado (){
+    public boolean turnoExpirado() {
         return Instant.now().isAfter(inicio.plus(ReglasJuego.duracionTurno));
     }
 
 
+
     public int getSegundosRestantes() {
-        Duration restante = getTiempoRestante();
-        return Math.max(0, (int) restante.getSeconds());
+        Instant finTurno = inicio.plus(ReglasJuego.duracionTurno);
+        Instant ahora = Instant.now();
+        if (ahora.isAfter(finTurno)) {
+            return 0;
+        }
+        return (int) Duration.between(ahora, finTurno).getSeconds();
     }
 
-    private Duration getTiempoRestante() {
+
+
+    /*private Duration getTiempoRestante() {
         Instant finTurno = inicio.plus(ReglasJuego.duracionTurno);
         Instant ahora = Instant.now();
 
@@ -61,7 +68,7 @@ public class RelojJuego {
         }
 
         return Duration.between(ahora, finTurno);
-    }
+    }*/
 
     public String getUnidadActual() {
         return unidadActual;

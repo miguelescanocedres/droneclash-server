@@ -67,9 +67,12 @@ public class MotorJuego {
         dron.ConsumirCombustible();
         partidaActual.getReloj().setUnidadActual(dron.getId());
         if(dron.SinMovimientos()) {
+            TipoEquipo equipoAntes = partidaActual.getReloj().getEquipoActual();
             partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(), partidaActual.getEquipoAzul().getJugadores());
             dron.RecargarTurno();
+            evaluarFinTurnoAdicional(equipoAntes);
         }
+
 
         System.out.println("--- MOVIMIENTO DE DRON COMPLETADO ---");
     }
@@ -95,21 +98,22 @@ public class MotorJuego {
         pd.ConsumirCombustible();
         partidaActual.getReloj().setUnidadActual(pd.getId());
         if(pd.SinMovimientos()) {
+            TipoEquipo equipoAntes = partidaActual.getReloj().getEquipoActual();
             partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(), partidaActual.getEquipoAzul().getJugadores());
             pd.RecargarTurno();
+            evaluarFinTurnoAdicional(equipoAntes);
         }
     }
 
-    public synchronized void procesarDispararDron (String dronId, int targetX, int targetY) throws  ReglaJuegoException
-    {
+    public synchronized void procesarDispararDron(String dronId, int targetX, int targetY) throws ReglaJuegoException {
         validarPartidaEnCurso();
         Unidad unidadAtacante = partidaActual.buscarUnidadPorId(dronId);
         Dron atacante = (Dron) unidadAtacante;
         Posicion posObjetivo = new Posicion(targetX, targetY);
 
 
-        boolean esDisparoValido = ReglasJuego.ValidarAtaque(atacante,posObjetivo);
-        if(!esDisparoValido) {
+        boolean esDisparoValido = ReglasJuego.ValidarAtaque(atacante, posObjetivo);
+        if (!esDisparoValido) {
             throw new ReglaJuegoException("El ataque fue invalidado por Reglas de juego");
         }
         System.out.println("Disparo validado");
@@ -117,13 +121,19 @@ public class MotorJuego {
         atacante.ConsumirMunicion();
         atacante.ConsumirCombustible();
         Unidad unidadObjetivo = partidaActual.getTablero().getCelda(targetX, targetY).getUnidad();
-        ReglasJuego.AplicarImpacto(atacante,unidadObjetivo,partidaActual);
+        ReglasJuego.AplicarImpacto(atacante, unidadObjetivo, partidaActual);
         partidaActual.getReloj().setUnidadActual(unidadAtacante.getId());
-        if(unidadAtacante.SinMovimientos()) {
+
+        EvaluarVictoria(); // no estoy seguro si va aca pero creo que no hay otro lugar logico
+
+        if(unidadAtacante.SinMovimientos() && partidaActual.getEstado() == EstadoPartida.EN_CURSO) {
+            TipoEquipo equipoAntes = partidaActual.getReloj().getEquipoActual();
             partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(), partidaActual.getEquipoAzul().getJugadores());
             unidadAtacante.RecargarTurno();
+            evaluarFinTurnoAdicional(equipoAntes);
         }
-        EvaluarVictoria(); // no estoy seguro si va aca pero creo que no hay otro lugar logico
+
+        //EvaluarVictoria(); // no estoy seguro si va aca pero creo que no hay otro lugar logico
     }
 
 
@@ -145,26 +155,88 @@ public class MotorJuego {
         Partida partida = this.partidaActual;
         if (partida.getEstado() != EstadoPartida.EN_CURSO) return;
 
-        PortaDrones portaRojo = partida.getEquipoRojo().getPortaDrones();
-        PortaDrones portaAzul = partida.getEquipoAzul().getPortaDrones();
+        TipoEquipo equipoAtacante = partida.getReloj().getEquipoActual();
+        TipoEquipo equipoDefensor = (equipoAtacante == TipoEquipo.ROJO_AEREO)
+                ? TipoEquipo.AZUL_NAVAL : TipoEquipo.ROJO_AEREO;
 
-        boolean rojoDestruido = portaRojo != null && portaRojo.getVida() <= 0;
-        boolean azulDestruido = portaAzul != null && portaAzul.getVida() <= 0;
+        // 1: todos los drones del defensor destruidos
+        boolean defensorSinDrones = partida.getUnidadesPorId().values().stream()
+                .noneMatch(u -> u instanceof Dron && u.getEquipo().getTipoEquipo() == equipoDefensor);
 
-        if (rojoDestruido) {
-            partida.setGanador(TipoEquipo.AZUL_NAVAL);
+        if (defensorSinDrones) {
+            partida.setGanador(equipoAtacante);
             partida.setEstado(EstadoPartida.FINALIZADA);
             partida.detenerLoop();
-            System.out.println("¡VICTORIA! El equipo AZUL NAVAL ha ganado la partida.");
-        } else if (azulDestruido) {
-            partida.setGanador(TipoEquipo.ROJO_AEREO);
-            partida.setEstado(EstadoPartida.FINALIZADA);
-            partida.detenerLoop();
-            System.out.println("¡VICTORIA! El equipo ROJO AEREO ha ganado la partida.");
+            System.out.println("¡VICTORIA! " + equipoAtacante + " destruyó todos los drones rivales.");
+            return;
+        }
+
+        // 2: portadrones del defensor destruido
+        PortaDrones portaDefensor = (equipoDefensor == TipoEquipo.ROJO_AEREO)
+                ? partida.getEquipoRojo().getPortaDrones()
+                : partida.getEquipoAzul().getPortaDrones();
+
+        boolean portaDefensorDestruido = portaDefensor != null && portaDefensor.getVida() <= 0;
+
+        if (portaDefensorDestruido) {
+            if (partida.getEquipoConTurnoAdicional() != null) {
+                // Ambos portadrones destruidos → empate
+                partida.setEstado(EstadoPartida.EMPATE);
+                partida.detenerLoop();
+                System.out.println("¡EMPATE! Ambos portadrones fueron destruidos.");
+            } else {
+                // Primer portadrones destruido → turno adicional para el defensor
+                partida.setEquipoConTurnoAdicional(equipoDefensor);
+                System.out.println("¡PORTADRONES DESTRUIDO! " + equipoDefensor + " tiene un turno adicional para contraatacar.");
+            }
         }
     }
 
-    public void sobreEscribirPartida (Partida partida) {
-        this.partidaActual = partida;
+    private void evaluarFinTurnoAdicional(TipoEquipo equipoQuePasoTurno) {
+        if (partidaActual.getEstado() != EstadoPartida.EN_CURSO) return;
+
+        TipoEquipo equipoConTA = partidaActual.getEquipoConTurnoAdicional();
+        if (equipoConTA == null || equipoConTA != equipoQuePasoTurno) return;
+
+        // El equipo con turno adicional acaba de terminar su turno
+        TipoEquipo equipoRival = (equipoConTA == TipoEquipo.ROJO_AEREO)
+                ? TipoEquipo.AZUL_NAVAL : TipoEquipo.ROJO_AEREO;
+
+        PortaDrones portaRival = (equipoRival == TipoEquipo.ROJO_AEREO)
+                ? partidaActual.getEquipoRojo().getPortaDrones()
+                : partidaActual.getEquipoAzul().getPortaDrones();
+
+        boolean rivalDestruido = portaRival != null && portaRival.getVida() <= 0;
+
+        if (rivalDestruido) {
+            partidaActual.setEstado(EstadoPartida.EMPATE);
+            partidaActual.detenerLoop();
+            System.out.println("¡EMPATE! Ambos portadrones fueron destruidos.");
+        } else {
+            partidaActual.setGanador(equipoRival);
+            partidaActual.setEstado(EstadoPartida.FINALIZADA);
+            partidaActual.detenerLoop();
+            System.out.println("¡VICTORIA! " + equipoRival + " gana. " + equipoConTA + " no logró destruir el portadrones rival.");
+        }
     }
+
+    public synchronized void procesarPasarTurno() throws ReglaJuegoException {
+        validarPartidaEnCurso();
+        TipoEquipo equipoAntes = partidaActual.getReloj().getEquipoActual();
+        String idUnidadActual = partidaActual.getReloj().getUnidadActual();
+        if (idUnidadActual != null) {
+            Unidad unidad = partidaActual.buscarUnidadPorId(idUnidadActual);
+            if (unidad != null) unidad.RecargarTurno();
+        }
+        partidaActual.getReloj().PasarTurno(
+                partidaActual.getEquipoRojo().getJugadores(),
+                partidaActual.getEquipoAzul().getJugadores()
+        );
+        evaluarFinTurnoAdicional(equipoAntes);
+    }
+
+
+
 }
+
+
