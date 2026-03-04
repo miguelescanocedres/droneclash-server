@@ -109,6 +109,7 @@ public class ControladorJuego {
         boolean guardo = ServicioJuego.guardarPartida(idJugador);
         return ResponseEntity.ok(guardo);
     }
+
     @GetMapping("/cargar")
     public ResponseEntity<?> CargarPartida(@RequestParam long idPartida){
         boolean cargo = ServicioJuego.cargarPartida(idPartida);

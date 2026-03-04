@@ -173,6 +173,48 @@ public class MotorJuego {
         }
     }
 
+    private void evaluarFinTurnoAdicional(TipoEquipo equipoQuePasoTurno) {
+        if (partidaActual.getEstado() != EstadoPartida.EN_CURSO) return;
+
+        TipoEquipo equipoConTA = partidaActual.getEquipoConTurnoAdicional();
+        if (equipoConTA == null || equipoConTA != equipoQuePasoTurno) return;
+
+        TipoEquipo equipoRival = (equipoConTA == TipoEquipo.ROJO_AEREO)
+                ? TipoEquipo.AZUL_NAVAL : TipoEquipo.ROJO_AEREO;
+
+        PortaDrones portaRival = (equipoRival == TipoEquipo.ROJO_AEREO)
+                ? partidaActual.getEquipoRojo().getPortaDrones()
+                : partidaActual.getEquipoAzul().getPortaDrones();
+
+        boolean rivalDestruido = portaRival != null && portaRival.getVida() <= 0;
+
+        if (rivalDestruido) {
+            partidaActual.setEstado(EstadoPartida.EMPATE);
+            partidaActual.detenerLoop();
+            System.out.println("¡EMPATE! Ambos portadrones fueron destruidos.");
+        } else {
+            partidaActual.setGanador(equipoRival);
+            partidaActual.setEstado(EstadoPartida.FINALIZADA);
+            partidaActual.detenerLoop();
+            System.out.println("¡VICTORIA! " + equipoRival + " gana. " + equipoConTA + " no logró destruir el portadrones rival.");
+        }
+    }
+
+    public synchronized void procesarPasarTurno() throws ReglaJuegoException {
+        validarPartidaEnCurso();
+        TipoEquipo equipoAntes = partidaActual.getReloj().getEquipoActual();
+        String idUnidadActual = partidaActual.getReloj().getUnidadActual();
+        if (idUnidadActual != null) {
+            Unidad unidad = partidaActual.buscarUnidadPorId(idUnidadActual);
+            if (unidad != null) unidad.RecargarTurno();
+        }
+        partidaActual.getReloj().PasarTurno(
+                partidaActual.getEquipoRojo().getJugadores(),
+                partidaActual.getEquipoAzul().getJugadores()
+        );
+        evaluarFinTurnoAdicional(equipoAntes);
+    }
+
     public void sobreEscribirPartida (Partida partida) {
         this.partidaActual = partida;
     }
