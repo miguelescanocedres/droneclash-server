@@ -67,9 +67,12 @@ public class MotorJuego {
         dron.ConsumirCombustible();
         partidaActual.getReloj().setUnidadActual(dron.getId());
         if(dron.SinMovimientos()) {
+            TipoEquipo equipoAntes = partidaActual.getReloj().getEquipoActual();
             partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(), partidaActual.getEquipoAzul().getJugadores());
             dron.RecargarTurno();
+            evaluarFinTurnoAdicional(equipoAntes);
         }
+
 
         System.out.println("--- MOVIMIENTO DE DRON COMPLETADO ---");
     }
@@ -95,21 +98,22 @@ public class MotorJuego {
         pd.ConsumirCombustible();
         partidaActual.getReloj().setUnidadActual(pd.getId());
         if(pd.SinMovimientos()) {
+            TipoEquipo equipoAntes = partidaActual.getReloj().getEquipoActual();
             partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(), partidaActual.getEquipoAzul().getJugadores());
             pd.RecargarTurno();
+            evaluarFinTurnoAdicional(equipoAntes);
         }
     }
 
-    public synchronized void procesarDispararDron (String dronId, int targetX, int targetY) throws  ReglaJuegoException
-    {
+    public synchronized void procesarDispararDron(String dronId, int targetX, int targetY) throws ReglaJuegoException {
         validarPartidaEnCurso();
         Unidad unidadAtacante = partidaActual.buscarUnidadPorId(dronId);
         Dron atacante = (Dron) unidadAtacante;
         Posicion posObjetivo = new Posicion(targetX, targetY);
 
 
-        boolean esDisparoValido = ReglasJuego.ValidarAtaque(atacante,posObjetivo);
-        if(!esDisparoValido) {
+        boolean esDisparoValido = ReglasJuego.ValidarAtaque(atacante, posObjetivo);
+        if (!esDisparoValido) {
             throw new ReglaJuegoException("El ataque fue invalidado por Reglas de juego");
         }
         System.out.println("Disparo validado");
@@ -117,13 +121,18 @@ public class MotorJuego {
         atacante.ConsumirMunicion();
         atacante.ConsumirCombustible();
         Unidad unidadObjetivo = partidaActual.getTablero().getCelda(targetX, targetY).getUnidad();
-        ReglasJuego.AplicarImpacto(atacante,unidadObjetivo,partidaActual);
+        ReglasJuego.AplicarImpacto(atacante, unidadObjetivo, partidaActual);
         partidaActual.getReloj().setUnidadActual(unidadAtacante.getId());
-        if(unidadAtacante.SinMovimientos()) {
+
+        EvaluarVictoria(); // no estoy seguro si va aca pero creo que no hay otro lugar logico
+
+        if(unidadAtacante.SinMovimientos() && partidaActual.getEstado() == EstadoPartida.EN_CURSO) {
+            TipoEquipo equipoAntes = partidaActual.getReloj().getEquipoActual();
             partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(), partidaActual.getEquipoAzul().getJugadores());
             unidadAtacante.RecargarTurno();
         }
-        EvaluarVictoria(); // no estoy seguro si va aca pero creo que no hay otro lugar logico
+
+        //EvaluarVictoria(); // no estoy seguro si va aca pero creo que no hay otro lugar logico
     }
 
 
@@ -164,20 +173,7 @@ public class MotorJuego {
         }
     }
 
-
-    //es pra el tiempo total de partida
-    public void EvaluarVictoriaPorTiempo() {
-        Partida partida = this.partidaActual;
-        if (partida.getEstado() != EstadoPartida.EN_CURSO) return;
-
-        partida.detenerLoop();
-        partida.setEstado(EstadoPartida.EMPATE);
-        System.out.println("EMPATE: se agotó el tiempo de la partida."); // sis se termina el tiempo = empate automatico
-    }
-
     public void sobreEscribirPartida (Partida partida) {
         this.partidaActual = partida;
     }
-
-
 }

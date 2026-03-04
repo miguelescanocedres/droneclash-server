@@ -144,11 +144,9 @@ public class ServicioJuego {
                         accion.getObjetivoX());
                 break;
             case ConstantesAcciones.PasarTurno:
-                motorJuego.getPartidaActual()
-                        .getReloj()
-                        .PasarTurno(motorJuego.getPartidaActual().getEquipoRojo().getJugadores(),
-                                    motorJuego.getPartidaActual().getEquipoAzul().getJugadores());
+                motorJuego.procesarPasarTurno();
                 break;
+
             default:
                 // Si la acción no es conocida, también podemos lanzar una excepción.
                 throw new ReglaJuegoException("Acción desconocida o no implementada: " + accion.getAccion());
