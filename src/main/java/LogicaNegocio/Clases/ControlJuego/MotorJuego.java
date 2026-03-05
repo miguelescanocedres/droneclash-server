@@ -70,6 +70,7 @@ public class MotorJuego {
             TipoEquipo equipoAntes = partidaActual.getReloj().getEquipoActual();
             partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(), partidaActual.getEquipoAzul().getJugadores());
             dron.RecargarTurno();
+            dron.RecargarMunicion();
             evaluarFinTurnoAdicional(equipoAntes);
         }
 
@@ -130,6 +131,7 @@ public class MotorJuego {
             TipoEquipo equipoAntes = partidaActual.getReloj().getEquipoActual();
             partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(), partidaActual.getEquipoAzul().getJugadores());
             unidadAtacante.RecargarTurno();
+            ((Dron) unidadAtacante).RecargarMunicion();
         }
 
         //EvaluarVictoria(); // no estoy seguro si va aca pero creo que no hay otro lugar logico
