@@ -6,7 +6,8 @@ import LogicaNegocio.Enums.TipoArma;
 
 public abstract class Dron extends Unidad {
     protected TipoArma tipoArma;
-    protected int municion;
+    protected int municionMaxima;
+    protected int municionActual;
 
     public Dron(Posicion posicion, Equipo equipo) {
         super(posicion, equipo);
@@ -15,13 +16,17 @@ public abstract class Dron extends Unidad {
     }
 
     public void ConsumirMunicion() {
-        if (municion > 0) {
-            municion--;
+        if (municionActual > 0) {
+            municionActual--;
         }
     }
 
+    public void RecargarMunicion(){
+        this.municionActual = this.municionMaxima;
+    }
 
     public TipoArma getTipoArma() { return tipoArma; }
-    public int getMunicion() { return municion; }
-    public void setMunicionPersistencia(int m) { this.municion = m; }
+    public int getMunicionActual() { return municionActual; }
+    public int getMunicionMaxima() { return municionMaxima; }
+    public void setMunicionPersistencia(int m) { this.municionActual = m; }
 }

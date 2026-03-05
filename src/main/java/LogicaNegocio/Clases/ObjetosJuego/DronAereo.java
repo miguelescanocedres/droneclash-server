@@ -10,7 +10,8 @@ public class DronAereo extends Dron {
     public DronAereo(Posicion posicion, Equipo equipo) {
         super(posicion, equipo);
         tipoArma = TipoArma.BOMBA;
-        municion = 1;
+        municionMaxima = 1;
+        municionActual = this.municionMaxima;
         visionRango = ReglasJuego.VisionBaseRojo;
     }
 

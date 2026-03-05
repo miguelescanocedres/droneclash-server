@@ -206,6 +206,9 @@ public class Partida {
             {
                 Unidad unidadActual = unidadesPorId.get(idUnidadActual);
                 unidadActual.RecargarTurno();
+                if (unidadActual instanceof Dron dron) {
+                    dron.RecargarMunicion();
+                }
             }
             reloj.PasarTurno(getEquipoRojo().getJugadores(),getEquipoAzul().getJugadores());
         }

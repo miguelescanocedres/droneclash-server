@@ -349,7 +349,7 @@ public class ServicioJuego {
         Unidad unidadSeleccionada = partidaActual.buscarUnidadPorId(idDron);
         Dron dronSeleccionado = (Dron) unidadSeleccionada;
 
-        int municion = dronSeleccionado.getMunicion();
+        int municion = dronSeleccionado.getMunicionActual();
         TipoEquipo tipoEquipo = dronSeleccionado.getEquipo().getTipoEquipo();
         String equipo = tipoEquipo.name();
 

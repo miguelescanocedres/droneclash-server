@@ -44,7 +44,7 @@ public class ReglasJuego {
     public static boolean ValidarAtaque(Dron atacante,Posicion posicion) {
 
 
-        if (atacante.getMunicion() <= 0) {
+        if (atacante.getMunicionActual() <= 0) {
             System.err.println("Validación Fallida: El dron no tiene munición.");
             return false;
         }

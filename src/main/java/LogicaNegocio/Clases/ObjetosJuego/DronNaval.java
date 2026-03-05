@@ -10,7 +10,8 @@ public class DronNaval extends Dron {
     public DronNaval(Posicion posicion, Equipo equipo) {
         super(posicion, equipo);
         tipoArma = TipoArma.MISIL;
-        municion = 2;
+        municionMaxima = 2;
+        municionActual = this.municionMaxima;
         visionRango = ReglasJuego.VisionBaseAzul;
     }
 

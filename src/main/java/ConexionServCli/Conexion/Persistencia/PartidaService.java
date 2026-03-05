@@ -76,7 +76,7 @@ public class PartidaService {
             if (u instanceof PortaDrones p) {
                 dto.setVida(p.getVida());
             } else if (u instanceof Dron d) {
-                dto.setMunicion(d.getMunicion());
+                dto.setMunicion(d.getMunicionActual());
             }
 
             map.put(dto.getId(), dto);
