@@ -17,7 +17,8 @@ public class EstadoJuego {
     private String idJugadorActual;
     private String equipoAsignado;
     private List<int[]> celdasVisibles;
-
+    private int integridadPortaAereo;
+    private int integridadPortaNaval;
 
     public int getTurno() {
         return turno;
@@ -107,4 +108,12 @@ public class EstadoJuego {
     public void setCeldasVisibles(List<int[]> celdasVisibles) {
         this.celdasVisibles = celdasVisibles;
     }
+
+    public int getIntegridadPortaAereo() {return integridadPortaAereo;}
+
+    public void setIntegridadPortaAereo(int integridadPortaAereo) {this.integridadPortaAereo = integridadPortaAereo;}
+
+    public int getIntegridadPortaNaval() {return integridadPortaNaval;}
+
+    public void setIntegridadPortaNaval(int integridadPortaNaval) {this.integridadPortaNaval = integridadPortaNaval;}
 }
