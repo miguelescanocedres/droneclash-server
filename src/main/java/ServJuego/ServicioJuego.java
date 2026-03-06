@@ -195,6 +195,20 @@ public class ServicioJuego {
         List<DatosPortaDron> portaDronesDTO = new ArrayList<>();
         List<DatosCelda> celdasOcupadas = new ArrayList<>();
 
+        //Esto es para que ambos puedan ver la vida de los portadrones
+        PortaDrones portaAereo = partidaActual.getPortaDronEquipo(TipoEquipo.ROJO_AEREO);
+        PortaDrones portaNaval = partidaActual.getPortaDronEquipo(TipoEquipo.AZUL_NAVAL);
+
+        estadoJuegoDTO.setIntegridadPortaAereo(
+                portaAereo != null ? portaAereo.getVida() : 0
+        );
+
+        estadoJuegoDTO.setIntegridadPortaNaval(
+                portaNaval != null ? portaNaval.getVida() : 0
+        );
+
+
+
         for (Unidad unidad : partidaActual.getUnidadesPorId().values()) {
             boolean esPropia = (equipoSolicitante == null)
                     || unidad.getEquipo().getTipoEquipo() == equipoSolicitante;
