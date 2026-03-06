@@ -28,7 +28,7 @@ public class Tablero {
         return fila >= 0 && fila < FILAS && columna >= 0 && columna < COLUMNAS;
     }
 
-    public boolean esPosicionValida(Posicion pos) {
+    private boolean esPosicionValida(Posicion pos) {
         return estaDentroDelTablero(pos.getX(), pos.getY())
                 && !grilla[pos.getX()][pos.getY()].estaOcupada();
     }
@@ -45,6 +45,4 @@ public class Tablero {
         grilla[origen.getX()][origen.getY()].removerUnidad();
         grilla[destino.getX()][destino.getY()].colocarUnidad(unidad);
     }
-
-    public Celda[][] getGrilla() { return grilla; }
 }

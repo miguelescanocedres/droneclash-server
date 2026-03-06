@@ -69,9 +69,10 @@ public class ServicioJuego {
             throw new ReglaJuegoException("El idJugador es requerido.");
         }
 
-        TipoEquipo equipoAsignado = motorJuego.agregarJugador(idJugador);
-
         Partida partida = motorJuego.getPartidaActual();
+        TipoEquipo equipoAsignado = partida.agregarJugador(idJugador);
+
+
         Equipo equipo = (equipoAsignado == TipoEquipo.ROJO_AEREO)
                 ? partida.getEquipoRojo()
                 : partida.getEquipoAzul();
@@ -160,11 +161,11 @@ public class ServicioJuego {
 
     }
 
-    public static boolean RequestDeJugadorActual (String idJugador){
+    private static boolean RequestDeJugadorActual (String idJugador){
         return motorJuego.getPartidaActual().getReloj().getJugadorActual().getId().equals(idJugador);
     }
 
-    public static boolean RequestDeUnidadValida (String idUnidad){
+    private static boolean RequestDeUnidadValida (String idUnidad){
         String idUnidadActual = motorJuego.getPartidaActual().getReloj().getUnidadActual();
         return idUnidadActual == null || idUnidadActual.equals(idUnidad);
     }

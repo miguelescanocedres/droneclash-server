@@ -23,14 +23,6 @@ public class MotorJuego {
         return partidaActual;
     }
 
-    public TipoEquipo agregarJugador(String idJugador) throws ReglaJuegoException {
-        return partidaActual.agregarJugador(idJugador);
-    }
-
-    public void iniciarJuego() throws ReglaJuegoException {
-        partidaActual.iniciarPartida();
-    }
-
     private void validarPartidaEnCurso() throws ReglaJuegoException {
         if (partidaActual.getEstado() != EstadoPartida.EN_CURSO) {
             throw new ReglaJuegoException("No se puede realizar acciones: la partida no esta en curso.");
@@ -152,7 +144,7 @@ public class MotorJuego {
 //        System.out.println("--- TURNO CAMBIADO: Turno " + partida.getTurno() + " - Equipo: " + partida.getTurnoActual() + " ---");
 //    }
 
-    public void EvaluarVictoria() {
+    private void EvaluarVictoria() {
         Partida partida = this.partidaActual;
         if (partida.getEstado() != EstadoPartida.EN_CURSO) return;
 

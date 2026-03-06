@@ -25,11 +25,9 @@ public class Partida {
     private Equipo equipoRojo;
     private Equipo equipoAzul;
     private Tablero tablero;
-    private TipoEquipo turnoActual;
     private Map<String, Unidad> unidadesPorId;
     private int turno;
     private RelojJuego reloj;
-    private RelojJuego relojPartida;
     private EstadoPartida estado;
     private TipoEquipo ganador;
     private ScheduledExecutorService scheduler;
@@ -37,6 +35,7 @@ public class Partida {
     private TipoEquipo equipoQueArranca;
     private boolean partidaCargada;
     private TipoEquipo equipoConTurnoAdicional = null;
+    private long idPartidaCargada;
 
 
     public Partida() {
@@ -111,7 +110,6 @@ public class Partida {
         this.setEstado(EstadoPartida.EN_CURSO);
 
         Equipo equipoQueArranca = this.equipoQueArranca == TipoEquipo.ROJO_AEREO ? equipoRojo : equipoAzul;
-        this.setTurnoActual(this.equipoQueArranca);
         this.setTurno(1);
         this.reloj = new RelojJuego(equipoQueArranca.getJugadores());
         iniciarLoop(100);
@@ -126,7 +124,6 @@ public class Partida {
         }
 
         Equipo equipoQueArranca = this.equipoQueArranca == TipoEquipo.ROJO_AEREO ? equipoRojo : equipoAzul;
-        this.setTurnoActual(this.equipoQueArranca);
         this.setTurno(1);
         this.reloj = new RelojJuego(equipoQueArranca.getJugadores());
         iniciarLoop(100);
@@ -199,7 +196,7 @@ public class Partida {
         }
     }
 
-    public void tick() {
+    private void tick() {
         if (reloj.turnoExpirado()) {
             String idUnidadActual = reloj.getUnidadActual();
             if(idUnidadActual != null)
@@ -232,7 +229,7 @@ public class Partida {
         }
     }
 
-    public void iniciarLoop(long intervaloMillis) {
+    private void iniciarLoop(long intervaloMillis) {
         scheduler = Executors.newSingleThreadScheduledExecutor();
 
         scheduler.scheduleAtFixedRate(() -> {
@@ -254,10 +251,7 @@ public class Partida {
     public Map<String, Unidad> getUnidadesPorId() { return unidadesPorId; }
     public int getTurno() { return turno; }
     public void setTurno(int turno) { this.turno = turno; }
-    public TipoEquipo getTurnoActual() { return turnoActual; }
-    public void setTurnoActual(TipoEquipo turnoActual) { this.turnoActual = turnoActual; }
     public RelojJuego getReloj() { return reloj; }
-    public RelojJuego getRelojPartida() { return relojPartida; }
     public EstadoPartida getEstado() { return estado; }
     public void setEstado(EstadoPartida estado) { this.estado = estado; }
     public Equipo getEquipoRojo() { return equipoRojo; }
@@ -288,4 +282,7 @@ public class Partida {
 
     public TipoEquipo getEquipoConTurnoAdicional() { return equipoConTurnoAdicional; }
 
+    public void SetIdPartidaCargada(long idPartida) {
+        this.idPartidaCargada = idPartida;
+    }
 }
