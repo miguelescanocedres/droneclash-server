@@ -5,7 +5,7 @@ import LogicaNegocio.Enums.TipoEquipo;
 public class Jugador {
     private String id;
     private String nombre;
-    private TipoEquipo equipo; //Le agregue esto que nos habiamos olvidado jeje
+    private TipoEquipo equipo;
 
     public Jugador() {}
 

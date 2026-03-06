@@ -282,23 +282,10 @@ public class Partida {
         return null;
     }
 
-    public TipoEquipo getEquipoQueArranca() {
-        return equipoQueArranca;
-    }
-
-    public void setEquipoQueArranca(TipoEquipo equipoQueArranca) {
-        this.equipoQueArranca = equipoQueArranca;
-    }
-
     public boolean isPartidaCargada() {
         return partidaCargada;
     }
 
-    public void setPartidaCargada(boolean partidaCargada) {
-        this.partidaCargada = partidaCargada;
-    }
-
     public TipoEquipo getEquipoConTurnoAdicional() { return equipoConTurnoAdicional; }
-    public void setEquipoConTurnoAdicional(TipoEquipo equipo) { this.equipoConTurnoAdicional = equipo; }
 
 }

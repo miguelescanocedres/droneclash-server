@@ -12,8 +12,4 @@ public class PortaDronesNaval extends PortaDrones{
         vida = 3;
         visionRango = 4; // mitad que la del portadron Aereo
     }
-    public void recibirDanio (){
-
-    }
-
 }

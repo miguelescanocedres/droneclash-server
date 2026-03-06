@@ -57,19 +57,6 @@ public class RelojJuego {
         return (int) Duration.between(ahora, finTurno).getSeconds();
     }
 
-
-
-    /*private Duration getTiempoRestante() {
-        Instant finTurno = inicio.plus(ReglasJuego.duracionTurno);
-        Instant ahora = Instant.now();
-
-        if (ahora.isAfter(finTurno)) {
-            return Duration.ZERO;
-        }
-
-        return Duration.between(ahora, finTurno);
-    }*/
-
     public String getUnidadActual() {
         return unidadActual;
     }
@@ -78,11 +65,5 @@ public class RelojJuego {
         this.unidadActual = unidadActual;
     }
 
-    public boolean DronValidoParaTomarTurno (String idDron){
-        return unidadActual == null || unidadActual.equals(idDron);
-    }
-
     public TipoEquipo getEquipoActual() {return equipoActual;}
-    public void setEquipoActual(TipoEquipo equipoActual) {this.equipoActual = equipoActual;}
-
 }

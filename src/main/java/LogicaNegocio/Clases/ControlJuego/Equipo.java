@@ -11,10 +11,6 @@ public class Equipo {
     TipoEquipo tipoEquipo;
     LinkedList<Jugador> jugadores;
     PortaDrones portaDrones;
-    boolean listoParaJugar = false;
-
-
-
 
     public Equipo(TipoEquipo tipoEquipo) {
         this.tipoEquipo = tipoEquipo;

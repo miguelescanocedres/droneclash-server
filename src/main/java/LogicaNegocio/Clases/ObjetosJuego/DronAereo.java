@@ -15,6 +15,4 @@ public class DronAereo extends Dron {
         visionRango = ReglasJuego.VisionBaseRojo;
     }
 
-
-
 }

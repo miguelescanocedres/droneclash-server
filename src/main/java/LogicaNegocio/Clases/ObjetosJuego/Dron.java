@@ -25,8 +25,6 @@ public abstract class Dron extends Unidad {
         this.municionActual = this.municionMaxima;
     }
 
-    public TipoArma getTipoArma() { return tipoArma; }
     public int getMunicionActual() { return municionActual; }
-    public int getMunicionMaxima() { return municionMaxima; }
     public void setMunicionPersistencia(int m) { this.municionActual = m; }
 }

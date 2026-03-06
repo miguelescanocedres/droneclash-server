@@ -7,16 +7,9 @@ import LogicaNegocio.Clases.ObjetosJuego.*;
 import java.time.Duration;
 
 public class ReglasJuego {
-    public static final int impactoAereo = 6;
-    public static final int impactoNaval = 3;
     public static final int VisionBaseRojo = 6; //Cambia vision drones aereos
     public static final int VisionBaseAzul = 3; //Cambia vision drones navales
     public static final Duration duracionTurno= Duration.ofSeconds(10);
-
-
-    public static boolean ValidarTurno(Jugador jugador, Partida partida) {
-        return true;
-    }
 
     public static boolean ValidarMovimiento(Unidad unidad, Posicion origen, Posicion destino, Tablero tablero) {
 
