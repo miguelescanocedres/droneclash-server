@@ -1,4 +1,6 @@
 package ConexionServCli.Conexion.Persistencia;
+import LogicaNegocio.Excepciones.ReglaJuegoException;
+
 import java.sql.*;
 
 public class PartidaDAO {
@@ -23,7 +25,7 @@ public class PartidaDAO {
         }
     }
 
-    public byte[] cargar(long idPartida) throws SQLException {
+    public byte[] cargar(long idPartida) throws SQLException, ReglaJuegoException {
 
         String sql = "SELECT INFOPARTIDA FROM PARTIDAS WHERE IDPARTIDA = ?";
 
@@ -36,7 +38,7 @@ public class PartidaDAO {
                 if (rs.next()) {
                     return rs.getBytes("INFOPARTIDA");
                 } else {
-                    throw new RuntimeException("Partida no encontrada");
+                    throw new ReglaJuegoException("Partida con id" + idPartida + " no encontrada");
                 }
             }
         }

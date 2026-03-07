@@ -6,11 +6,14 @@ import LogicaNegocio.Clases.ControlJuego.*;
 import LogicaNegocio.Clases.ObjetosJuego.Jugador;
 import LogicaNegocio.Clases.ObjetosJuego.*;
 import LogicaNegocio.Excepciones.ReglaJuegoException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.stereotype.Service;
 import LogicaNegocio.Enums.EstadoPartida;
 import LogicaNegocio.Enums.TipoEquipo;
 import ConexionServCli.DTO.DatosJugador;
 import ConexionServCli.DTO.RespuestaEquipos;
+
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -99,10 +102,8 @@ public class ServicioJuego {
         if (partida.getEstado() == EstadoPartida.FINALIZADA) {
             throw new ReglaJuegoException("La partida ya fue finalizada.");
         }
-        if(!motorJuego.getPartidaActual().isPartidaCargada())
-            partida.iniciarPartida();
-        else
-            partida.IniciarPartidaCargada();
+        partida.iniciarPartida();
+
         cuentaRegresivaFinMs = -1L;
         return obtenerEstadoJuego(null);
     }
@@ -392,36 +393,29 @@ public class ServicioJuego {
         cuentaRegresivaFinMs = -1L;
     }
 
-    public static boolean guardarPartida(String idJugador){
-        try
-        {
+    public static long guardarPartida(String idJugador) throws ReglaJuegoException {
+
             if(motorJuego.getPartidaActual().getReloj().getUnidadActual() != null)
-                return false;
+                throw new ReglaJuegoException("Solo se puede guardar al principio del turno");
 
             PartidaService service = new PartidaService();
-
-            service.guardarPartida(motorJuego.getPartidaActual());
-
-            return true;
-
-        }catch (Exception ex)
-        {
-            return false;
-        }
+            try {
+                long id = service.guardarPartida(motorJuego.getPartidaActual());
+                return id;
+            }catch(SQLException | JsonProcessingException e) {
+                throw new ReglaJuegoException("Error del servidor");
+            }
     }
 
-    public static boolean cargarPartida(long id) {
+    public static void cargarPartida(long id) throws ReglaJuegoException{
         PartidaService service = new PartidaService();
         try {
             Partida partidaCargada = service.cargarPartida(id);
             if(partidaCargada != null) {
                 motorJuego.sobreEscribirPartida(partidaCargada);
-                return true;
             }
-           return false;
-
-        } catch (Exception e) {
-            return false;
+        } catch (JsonProcessingException | SQLException e) {
+            throw new ReglaJuegoException("Error del servidor");
         }
     }
 

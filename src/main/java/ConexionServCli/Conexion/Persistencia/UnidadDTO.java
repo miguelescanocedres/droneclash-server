@@ -9,12 +9,9 @@ public class UnidadDTO {
     private String equipo;
     private int x;
     private int y;
-    private String estado;
-    private int combustibleActual;
 
     // no siempre cargadas
     private Integer vida;       // portadron
-    private Integer municion;   // dron
 
     public UnidadDTO() {}
 
@@ -58,36 +55,12 @@ public class UnidadDTO {
         this.y = y;
     }
 
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public int getCombustibleActual() {
-        return combustibleActual;
-    }
-
-    public void setCombustibleActual(int combustibleActual) {
-        this.combustibleActual = combustibleActual;
-    }
-
     public Integer getVida() {
         return vida;
     }
 
     public void setVida(Integer vida) {
         this.vida = vida;
-    }
-
-    public Integer getMunicion() {
-        return municion;
-    }
-
-    public void setMunicion(Integer municion) {
-        this.municion = municion;
     }
 
     // getters/setters...

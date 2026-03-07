@@ -50,7 +50,7 @@ public class Partida {
         partidaCargada = false;
     }
 
-    public Partida(TipoEquipo trunoActual) { // SOLO PARA PERSISTENCIA
+    public Partida(TipoEquipo trunoActual,long id) { // SOLO PARA PERSISTENCIA
         this.equipoRojo = new Equipo(TipoEquipo.ROJO_AEREO);
         this.equipoAzul = new Equipo(TipoEquipo.AZUL_NAVAL);
         this.tablero = new Tablero();
@@ -60,6 +60,7 @@ public class Partida {
         this.ultEventoCombate = null;
         this.equipoQueArranca = trunoActual;
         this.partidaCargada = true;
+        this.idPartidaCargada = id;
     }
 
     public TipoEquipo agregarJugador(String idJugador) throws ReglaJuegoException {
@@ -89,39 +90,26 @@ public class Partida {
             throw new ReglaJuegoException("No hay suficientes jugadores para iniciar la partida.");
         }
 
-        // Colocación del equipo ROJO
-        Posicion posPortaRojo = generarPosicionAleatoriaEnZona(TipoEquipo.ROJO_AEREO);
-        PortaDronesAereo portaRojo = new PortaDronesAereo(posPortaRojo, equipoRojo);
-        this.registrarUnidad(portaRojo);
-        this.tablero.colocarUnidad(portaRojo, posPortaRojo);
-        equipoRojo.setPortaDrones(portaRojo);
-        generarDronesAlrededor(portaRojo, equipoRojo);
-        this.reloj = new RelojJuego(equipoRojo.getJugadores());
+        if(!partidaCargada) {
+            // Colocación del equipo ROJO
+            Posicion posPortaRojo = generarPosicionAleatoriaEnZona(TipoEquipo.ROJO_AEREO);
+            PortaDronesAereo portaRojo = new PortaDronesAereo(posPortaRojo, equipoRojo);
+            this.registrarUnidad(portaRojo);
+            this.tablero.colocarUnidad(portaRojo, posPortaRojo);
+            equipoRojo.setPortaDrones(portaRojo);
+            generarDronesAlrededor(portaRojo, equipoRojo);
+            this.reloj = new RelojJuego(equipoRojo.getJugadores());
 
-        //  Colocación del equipo AZUL
-        Posicion posPortaAzul = generarPosicionAleatoriaEnZona(TipoEquipo.AZUL_NAVAL);
-        PortaDronesNaval portaAzul = new PortaDronesNaval(posPortaAzul, equipoAzul);
-        this.registrarUnidad(portaAzul);
-        this.tablero.colocarUnidad(portaAzul, posPortaAzul);
-        equipoAzul.setPortaDrones(portaAzul);
-        generarDronesAlrededor(portaAzul, equipoAzul);
-
+            //  Colocación del equipo AZUL
+            Posicion posPortaAzul = generarPosicionAleatoriaEnZona(TipoEquipo.AZUL_NAVAL);
+            PortaDronesNaval portaAzul = new PortaDronesNaval(posPortaAzul, equipoAzul);
+            this.registrarUnidad(portaAzul);
+            this.tablero.colocarUnidad(portaAzul, posPortaAzul);
+            equipoAzul.setPortaDrones(portaAzul);
+            generarDronesAlrededor(portaAzul, equipoAzul);
+        }
         // Cambiar el estado de la partida
         this.setEstado(EstadoPartida.EN_CURSO);
-
-        Equipo equipoQueArranca = this.equipoQueArranca == TipoEquipo.ROJO_AEREO ? equipoRojo : equipoAzul;
-        this.setTurno(1);
-        this.reloj = new RelojJuego(equipoQueArranca.getJugadores());
-        iniciarLoop(100);
-    }
-
-    public void IniciarPartidaCargada() throws ReglaJuegoException {
-        if (estado != EstadoPartida.ESPERANDO_JUGADORES) {
-            throw new ReglaJuegoException("La partida ya fue iniciada.");
-        }
-        if (equipoRojo.getCantidadJugadores() == 0 || equipoAzul.getCantidadJugadores() == 0) {
-            throw new ReglaJuegoException("No hay suficientes jugadores para iniciar la partida.");
-        }
 
         Equipo equipoQueArranca = this.equipoQueArranca == TipoEquipo.ROJO_AEREO ? equipoRojo : equipoAzul;
         this.setTurno(1);

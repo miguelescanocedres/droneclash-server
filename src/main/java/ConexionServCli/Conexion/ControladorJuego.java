@@ -105,15 +105,36 @@ public class ControladorJuego {
     }
 
     @GetMapping("/guardar")
-    public ResponseEntity<?> GuardarPartida(@RequestParam String idJugador){
-        boolean guardo = ServicioJuego.guardarPartida(idJugador);
-        return ResponseEntity.ok(guardo);
+    public ResponseEntity<PersistenciaResponse> GuardarPartida(@RequestParam String idJugador){
+        boolean exito;
+        long id = 0;
+        String msg;
+        try {
+            id = ServicioJuego.guardarPartida(idJugador);
+            msg = "Partida guardada correctamente con id " + id;
+            exito = true;
+        }catch(ReglaJuegoException e){
+            msg = e.getMessage();
+            exito = false;
+        }
+        PersistenciaResponse response = new PersistenciaResponse(msg,exito,id);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/cargar")
-    public ResponseEntity<?> CargarPartida(@RequestParam long idPartida){
-        boolean cargo = ServicioJuego.cargarPartida(idPartida);
-        return ResponseEntity.ok(null);
+    public ResponseEntity<PersistenciaResponse> CargarPartida(@RequestParam long idPartida){
+        String msg;
+        boolean exito;
+        try {
+            ServicioJuego.cargarPartida(idPartida);
+            msg = "Partida cargada con exito";
+            exito = true;
+        }catch(ReglaJuegoException e){
+            msg = e.getMessage();
+            exito = false;
+        }
+        PersistenciaResponse response = new PersistenciaResponse(msg,exito,idPartida);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/reiniciar")

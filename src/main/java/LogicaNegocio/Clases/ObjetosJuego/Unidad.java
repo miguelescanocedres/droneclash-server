@@ -53,7 +53,11 @@ public abstract class Unidad {
     public int getCombustibleMaximo() { return combustibleMaximo; }
     public void setIdPersistencia(String id) { this.id = id; }
     public void setEquipoPersistencia(Equipo equipo) { this.equipo = equipo; }
-    public void setCombustibleActualPersistencia(int v) { this.combustibleActual = v; }
+    public void setCombustibleActualPersistencia()
+    {
+        this.combustibleMaximo = 4;
+        this.combustibleActual = 4;
+    }
 
     public Equipo getEquipoPropietario() {
         return  this.equipo;
