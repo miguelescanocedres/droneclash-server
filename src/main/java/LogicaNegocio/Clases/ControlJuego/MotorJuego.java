@@ -109,10 +109,14 @@ public class MotorJuego {
             throw new ReglaJuegoException("El ataque fue invalidado por Reglas de juego");
         }
         System.out.println("Disparo validado");
+        Unidad unidadObjetivo = partidaActual.getTablero().getCelda(targetX, targetY).getUnidad();
+
+        if(unidadObjetivo.getEquipo().getTipoEquipo() == unidadAtacante.getEquipo().getTipoEquipo())
+            throw new ReglaJuegoException("No se puede atacar a unidades de tu mismo equipo");
 
         atacante.ConsumirMunicion();
         atacante.ConsumirCombustible();
-        Unidad unidadObjetivo = partidaActual.getTablero().getCelda(targetX, targetY).getUnidad();
+
         ReglasJuego.AplicarImpacto(atacante, unidadObjetivo, partidaActual);
         partidaActual.getReloj().setUnidadActual(unidadAtacante.getId());
 
