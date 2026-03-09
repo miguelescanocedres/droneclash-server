@@ -34,8 +34,8 @@ public class Partida {
     private EventoCombate ultEventoCombate;
     private TipoEquipo equipoQueArranca;
     private boolean partidaCargada;
-    private TipoEquipo equipoConTurnoAdicional = null;
     private long idPartidaCargada;
+    private boolean ultimoTurno;
 
 
     public Partida() {
@@ -48,6 +48,7 @@ public class Partida {
         this.ultEventoCombate = null;
         this.equipoQueArranca = Math.random() > 0.5 ? TipoEquipo.ROJO_AEREO : TipoEquipo.AZUL_NAVAL;
         partidaCargada = false;
+        ultimoTurno = false;
     }
 
     public Partida(TipoEquipo trunoActual,long id) { // SOLO PARA PERSISTENCIA
@@ -61,6 +62,7 @@ public class Partida {
         this.equipoQueArranca = trunoActual;
         this.partidaCargada = true;
         this.idPartidaCargada = id;
+        ultimoTurno = false;
     }
 
     public TipoEquipo agregarJugador(String idJugador) throws ReglaJuegoException {
@@ -195,6 +197,7 @@ public class Partida {
                     dron.RecargarMunicion();
                 }
             }
+            EvaluarVictoria();
             reloj.PasarTurno(getEquipoRojo().getJugadores(),getEquipoAzul().getJugadores());
         }
     }
@@ -268,9 +271,44 @@ public class Partida {
         return partidaCargada;
     }
 
-    public TipoEquipo getEquipoConTurnoAdicional() { return equipoConTurnoAdicional; }
-
     public void SetIdPartidaCargada(long idPartida) {
         this.idPartidaCargada = idPartida;
+    }
+
+    public boolean isUltimoTurno() {
+        return ultimoTurno;
+    }
+
+    public void setUltimoTurno(boolean ultimoTurno) {
+        this.ultimoTurno = ultimoTurno;
+    }
+
+    public void EvaluarVictoria() {
+        if (estado != EstadoPartida.EN_CURSO) return;
+
+        PortaDrones portaRojo = equipoRojo.getPortaDrones();
+        PortaDrones portaAzul = equipoAzul.getPortaDrones();
+
+        boolean rojoDestruido = portaRojo == null  || portaRojo.getVida() <= 0;
+        boolean azulDestruido = portaAzul == null || portaAzul.getVida() <= 0;
+        if (ultimoTurno) {
+            if(rojoDestruido && azulDestruido){
+                estado = EstadoPartida.EMPATE;
+                detenerLoop();
+                System.out.println("Ambos equipos destruyeron el portadron, empate");
+            }else if (rojoDestruido) {
+                ganador = TipoEquipo.AZUL_NAVAL;
+                estado = EstadoPartida.FINALIZADA;
+                detenerLoop();
+                System.out.println("¡VICTORIA! El equipo AZUL NAVAL ha ganado la partida.");
+            } else if (azulDestruido) {
+                ganador = TipoEquipo.ROJO_AEREO;
+                estado =EstadoPartida.FINALIZADA;
+                detenerLoop();
+                System.out.println("¡VICTORIA! El equipo ROJO AEREO ha ganado la partida.");
+            }
+        }
+        else if(rojoDestruido || azulDestruido)
+           ultimoTurno = true;
     }
 }

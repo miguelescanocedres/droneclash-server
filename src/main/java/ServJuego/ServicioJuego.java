@@ -409,6 +409,8 @@ public class ServicioJuego {
 
     public static void cargarPartida(long id) throws ReglaJuegoException{
         PartidaService service = new PartidaService();
+        if(motorJuego.getPartidaActual().getEstado() == EstadoPartida.EN_CURSO)
+            throw new ReglaJuegoException("La partida esta en curso, no se puede cargar!");
         try {
             Partida partidaCargada = service.cargarPartida(id);
             if(partidaCargada != null) {
