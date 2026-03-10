@@ -34,31 +34,7 @@ public class ServicioJuego {
     private static final int SEGUNDOS_CUENTA_REGRESIVA_INICIO = 30;
     private static volatile long cuentaRegresivaFinMs = -1L;
 
-    /*public ServicioJuego() {
-        inicializarJuego();
-    }
 
-    private void inicializarJuego() {
-        motorJuego = new MotorJuego();
-        Partida partida = motorJuego.getPartidaActual();
-
-        Jugador jugadorA = new Jugador("playerA", "Player A");
-        Jugador jugadorB = new Jugador("playerB", "Player B");
-        Posicion posDronA = new Posicion(7, 7);
-        DronAereo dronA = new DronAereo(posDronA, jugadorA);
-        partida.getTablero().colocarUnidad(dronA, posDronA);
-        partida.registrarUnidad(dronA);
-
-        Posicion posDronB = new Posicion(7, 10);
-        DronNaval dronB = new DronNaval(posDronB, jugadorB);
-        partida.getTablero().colocarUnidad(dronB, posDronB);
-        partida.registrarUnidad(dronB);
-
-        Posicion posPorta = new Posicion(5, 5);
-        PortaDronesAereo porta = new PortaDronesAereo(posPorta, jugadorA);
-        partida.getTablero().colocarUnidad(porta, posPorta);
-        partida.registrarUnidad(porta);
-    }*/
 
     public ServicioJuego() {
         motorJuego = new MotorJuego();
