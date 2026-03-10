@@ -1,8 +1,8 @@
 package ConexionServCli.DTO;
 
-/**
- * DTO que representa una celda ocupada en el tablero.
- */
+
+ //DTO que representa una celda ocupada en el tablero.
+
 public class DatosCelda {
     private int fila;
     private int columna;

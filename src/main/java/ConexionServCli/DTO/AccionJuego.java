@@ -1,8 +1,8 @@
 package ConexionServCli.DTO;
 
-/**
- * DTO que representa una acción enviada por el cliente.
- */
+
+ //DTO que representa una acción enviada por el cliente.
+
 public class AccionJuego {
     private String accion; // "moverDron", "moverPortaDron", etc.
     private String idJugador;

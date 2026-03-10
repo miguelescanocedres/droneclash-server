@@ -1,9 +1,8 @@
 package ConexionServCli.DTO;
 
-/**
- * DTO que representa los datos de un PortaDron para el cliente.
- * Los nombres de los campos están en español.
- */
+
+ //DTO que representa los datos de un PortaDron para el cliente.
+
 public class DatosPortaDron {
     private String id;
     private String equipo;

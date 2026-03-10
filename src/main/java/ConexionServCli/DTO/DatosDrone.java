@@ -1,8 +1,8 @@
 package ConexionServCli.DTO;
 
-/**
- DTO que representa los datos de un Dron para el cliente.
- */
+
+ // DTO que representa los datos de un Dron para el cliente.
+
 public class DatosDrone {
     private String id;
     private String equipo; // El equipo al que pertenece

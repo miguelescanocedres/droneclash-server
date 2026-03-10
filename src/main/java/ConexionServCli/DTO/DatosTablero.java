@@ -2,9 +2,9 @@ package ConexionServCli.DTO;
 
 import java.util.List;
 
-/**
- * DTO que representa los datos del tablero para el cliente.
- */
+
+ // DTO que representa los datos del tablero para el cliente.
+
 public class DatosTablero {
     private int filas;
     private int columnas;
