@@ -38,7 +38,7 @@ public class MotorJuego {
             throw new ReglaJuegoException("No se encontró ninguna unidad con el ID: " + dronId);
         }
         if (!(unidad instanceof Dron)) {
-            throw new ReglaJuegoException("La unidad con ID " + dronId + " no es un Dron");
+            throw new ReglaJuegoException("La unidad con ID " + dronId + " no es un Dron, es un " + unidad.getClass().getSimpleName());
         }
         System.out.println("Dron encontrado con éxito.");
 
@@ -50,7 +50,7 @@ public class MotorJuego {
         boolean esMovimientoValido = ReglasJuego.ValidarMovimiento(dron, origen, destino, partidaActual.getTablero());
 
         if (!esMovimientoValido) {
-            throw new ReglaJuegoException("El movimiento fue invalidado");
+            throw new ReglaJuegoException("El movimiento fue invalidado por ReglasJuego.ValidarMovimiento.");
         }
         System.out.println("Movimiento validado");
 
@@ -120,7 +120,7 @@ public class MotorJuego {
         ReglasJuego.AplicarImpacto(atacante, unidadObjetivo, partidaActual);
         partidaActual.getReloj().setUnidadActual(unidadAtacante.getId());
 
-        partidaActual.EvaluarVictoria();
+        partidaActual.EvaluarVictoria(); // no estoy seguro si va aca pero creo que no hay otro lugar logico
 
         if(unidadAtacante.SinMovimientos() && partidaActual.getEstado() == EstadoPartida.EN_CURSO) {
             TipoEquipo equipoAntes = partidaActual.getReloj().getEquipoActual();
