@@ -19,7 +19,7 @@ public class MotorJuego {
     }
 
 
-    public Partida getPartidaActual() {
+    public Partida GetPartidaActual() {
         return partidaActual;
     }
 
@@ -30,7 +30,7 @@ public class MotorJuego {
     }
 
 
-    public synchronized void procesarMoverDron(String dronId, int targetX, int targetY) throws ReglaJuegoException {
+    public synchronized void ProcesarMoverDron(String dronId, int targetX, int targetY) throws ReglaJuegoException {
         validarPartidaEnCurso();
         Unidad unidad = partidaActual.buscarUnidadPorId(dronId);
 
@@ -72,7 +72,7 @@ public class MotorJuego {
     }
 
 
-    public synchronized void procesarMoverPortaDrones(String portaDronesId, int targetX, int targetY) throws ReglaJuegoException {
+    public synchronized void ProcesarMoverPortaDrones(String portaDronesId, int targetX, int targetY) throws ReglaJuegoException {
         validarPartidaEnCurso();
         Unidad unidad = partidaActual.buscarUnidadPorId(portaDronesId);
         if (!(unidad instanceof PortaDrones)) {
@@ -97,7 +97,7 @@ public class MotorJuego {
         }
     }
 
-    public synchronized void procesarDispararDron(String dronId, int targetX, int targetY) throws ReglaJuegoException {
+    public synchronized void ProcesarDispararDron(String dronId, int targetX, int targetY) throws ReglaJuegoException {
         validarPartidaEnCurso();
         Unidad unidadAtacante = partidaActual.buscarUnidadPorId(dronId);
         Dron atacante = (Dron) unidadAtacante;
@@ -165,7 +165,7 @@ public class MotorJuego {
                 partida.setUltimoTurno(true);
     }
 
-    public synchronized void procesarPasarTurno() throws ReglaJuegoException {
+    public synchronized void ProcesarPasarTurno() throws ReglaJuegoException {
         validarPartidaEnCurso();
         TipoEquipo equipoAntes = partidaActual.getReloj().getEquipoActual();
         String idUnidadActual = partidaActual.getReloj().getUnidadActual();
@@ -179,7 +179,7 @@ public class MotorJuego {
         );
     }
 
-    public void sobreEscribirPartida (Partida partida) {
+    public void SobreEscribirPartida (Partida partida) {
         this.partidaActual = partida;
     }
 }
