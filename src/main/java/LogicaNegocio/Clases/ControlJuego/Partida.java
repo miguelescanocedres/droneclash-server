@@ -36,6 +36,7 @@ public class Partida {
     private boolean partidaCargada;
     private long idPartidaCargada;
     private boolean ultimoTurno;
+    private boolean validoVictoriaTurno;
 
 
     public Partida() {
@@ -49,6 +50,7 @@ public class Partida {
         this.equipoQueArranca = Math.random() > 0.5 ? TipoEquipo.ROJO_AEREO : TipoEquipo.AZUL_NAVAL;
         partidaCargada = false;
         ultimoTurno = false;
+        validoVictoriaTurno = false;
     }
 
     public Partida(TipoEquipo trunoActual,long id) { // SOLO PARA PERSISTENCIA
@@ -63,6 +65,7 @@ public class Partida {
         this.partidaCargada = true;
         this.idPartidaCargada = id;
         ultimoTurno = false;
+        validoVictoriaTurno = false;
     }
 
     public TipoEquipo agregarJugador(String idJugador) throws ReglaJuegoException {
@@ -197,8 +200,11 @@ public class Partida {
                     dron.RecargarMunicion();
                 }
             }
-            EvaluarVictoria();
+            if(!validoVictoriaTurno)
+                EvaluarVictoria();
+
             reloj.PasarTurno(getEquipoRojo().getJugadores(),getEquipoAzul().getJugadores());
+            validoVictoriaTurno = false;
         }
     }
 
@@ -310,5 +316,7 @@ public class Partida {
         }
         else if(rojoDestruido || azulDestruido)
            ultimoTurno = true;
+
+        validoVictoriaTurno = true;
     }
 }

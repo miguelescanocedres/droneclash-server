@@ -59,12 +59,13 @@ public class MotorJuego {
         dron.ConsumirCombustible();
         partidaActual.getReloj().setUnidadActual(dron.getId());
 
-        partidaActual.EvaluarVictoria();
+
 
         if(dron.SinMovimientos()) {
             partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(), partidaActual.getEquipoAzul().getJugadores());
             dron.RecargarTurno();
             dron.RecargarMunicion();
+            partidaActual.EvaluarVictoria();
         }
 
 
@@ -120,14 +121,15 @@ public class MotorJuego {
         ReglasJuego.AplicarImpacto(atacante, unidadObjetivo, partidaActual);
         partidaActual.getReloj().setUnidadActual(unidadAtacante.getId());
 
-        partidaActual.EvaluarVictoria(); // no estoy seguro si va aca pero creo que no hay otro lugar logico
-
         if(unidadAtacante.SinMovimientos() && partidaActual.getEstado() == EstadoPartida.EN_CURSO) {
             TipoEquipo equipoAntes = partidaActual.getReloj().getEquipoActual();
             partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(), partidaActual.getEquipoAzul().getJugadores());
             unidadAtacante.RecargarTurno();
             ((Dron) unidadAtacante).RecargarMunicion();
+            partidaActual.EvaluarVictoria();
         }
+             // no estoy seguro si va aca pero creo que no hay otro lugar logico
+
 
 
     }
