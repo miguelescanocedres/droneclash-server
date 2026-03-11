@@ -38,7 +38,7 @@ public class MotorJuego {
             throw new ReglaJuegoException("No se encontró ninguna unidad con el ID: " + dronId);
         }
         if (!(unidad instanceof Dron)) {
-            throw new ReglaJuegoException("La unidad con ID " + dronId + " no es un Dron, es un " + unidad.getClass().getSimpleName());
+            throw new ReglaJuegoException("La unidad con ID " + dronId + " no es un Dron");
         }
         System.out.println("Dron encontrado con éxito.");
 
@@ -50,7 +50,7 @@ public class MotorJuego {
         boolean esMovimientoValido = ReglasJuego.ValidarMovimiento(dron, origen, destino, partidaActual.getTablero());
 
         if (!esMovimientoValido) {
-            throw new ReglaJuegoException("El movimiento fue invalidado por ReglasJuego.ValidarMovimiento.");
+            throw new ReglaJuegoException("El movimiento fue invalidado");
         }
         System.out.println("Movimiento validado");
 
@@ -120,7 +120,7 @@ public class MotorJuego {
         ReglasJuego.AplicarImpacto(atacante, unidadObjetivo, partidaActual);
         partidaActual.getReloj().setUnidadActual(unidadAtacante.getId());
 
-        partidaActual.EvaluarVictoria(); // no estoy seguro si va aca pero creo que no hay otro lugar logico
+        partidaActual.EvaluarVictoria();
 
         if(unidadAtacante.SinMovimientos() && partidaActual.getEstado() == EstadoPartida.EN_CURSO) {
             TipoEquipo equipoAntes = partidaActual.getReloj().getEquipoActual();
@@ -129,23 +129,11 @@ public class MotorJuego {
             ((Dron) unidadAtacante).RecargarMunicion();
         }
 
-        //EvaluarVictoria(); // no estoy seguro si va aca pero creo que no hay otro lugar logico
+
     }
 
 
-//    public void CambiarTurno() {
-//        if (partidaActual.getEstado() != EstadoPartida.EN_CURSO) return; // si termina la partdia no quiero cambiar turno
-//
-//        Partida partida = this.partidaActual;
-//        if (partida.getTurnoActual() == TipoEquipo.ROJO_AEREO) {
-//            partida.setTurnoActual(TipoEquipo.AZUL_NAVAL);
-//        } else {
-//            partida.setTurnoActual(TipoEquipo.ROJO_AEREO);
-//        }
-//        partida.setTurno(partida.getTurno() + 1);
-//        partida.getReloj().PasarTurno(partidaActual.getEquipoAzul().getJugadores(),partidaActual.getEquipoRojo().getJugadores());
-//        System.out.println("--- TURNO CAMBIADO: Turno " + partida.getTurno() + " - Equipo: " + partida.getTurnoActual() + " ---");
-//    }
+
 
     private void EvaluarVictoria() {
         Partida partida = this.partidaActual;
