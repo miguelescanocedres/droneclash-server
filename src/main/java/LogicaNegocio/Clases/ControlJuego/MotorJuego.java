@@ -110,7 +110,6 @@ public class MotorJuego {
         partidaActual.EvaluarVictoria(); // no estoy seguro si va aca pero creo que no hay otro lugar logico
 
         if(unidadAtacante.SinMovimientos() && partidaActual.getEstado() == EstadoPartida.EN_CURSO) {
-            TipoEquipo equipoAntes = partidaActual.getReloj().getEquipoActual();
             partidaActual.getReloj().PasarTurno(partidaActual.getEquipoRojo().getJugadores(), partidaActual.getEquipoAzul().getJugadores());
             unidadAtacante.RecargarTurno();
             ((Dron) unidadAtacante).RecargarMunicion();
@@ -121,7 +120,6 @@ public class MotorJuego {
 
     public synchronized void ProcesarPasarTurno() throws ReglaJuegoException {
         ValidarPartidaEnCurso();
-        TipoEquipo equipoAntes = partidaActual.getReloj().getEquipoActual();
         String idUnidadActual = partidaActual.getReloj().getUnidadActual();
         if (idUnidadActual != null) {
             Unidad unidad = partidaActual.buscarUnidadPorId(idUnidadActual);
