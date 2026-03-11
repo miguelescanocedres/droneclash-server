@@ -4,11 +4,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class BaseDeDatosConfig {
-    private static final String URL =
-            "jdbc:mysql://localhost:3306/droneclash?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+    private static final String URL = ConfigDB.getURL();
 
-    private static final String USER = "root";
-    private static final String PASSWORD = "Proyecto";
+    private static final String USER = ConfigDB.getUser();
+    private static final String PASSWORD = ConfigDB.getPassword();
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);

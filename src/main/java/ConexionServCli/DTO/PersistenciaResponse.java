@@ -10,4 +10,16 @@ public class PersistenciaResponse {
         this.exito = exito;
         this.idPartida = idPartida;
     }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public Boolean getExito() {
+        return exito;
+    }
+
+    public long getIdPartida() {
+        return idPartida;
+    }
 }

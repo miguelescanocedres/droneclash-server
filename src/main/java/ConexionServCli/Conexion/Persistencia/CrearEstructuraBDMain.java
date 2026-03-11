@@ -7,20 +7,20 @@ import java.sql.Statement;
 
 public class CrearEstructuraBDMain {
 
-    private static final String HOST = "localhost";
-    private static final int PORT = 3306;
-
-    private static final String USER = "root";
-    private static final String PASSWORD = "Proyecto";
-
-    private static final String URL_SIN_DB =
-            "jdbc:mysql://" + HOST + ":" + PORT +
-                    "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-
     public static void main(String[] args) {
 
-        String crearDatabase = "CREATE DATABASE IF NOT EXISTS droneclash";
-        String usarDatabase = "USE droneclash";
+        String host = ConfigDB.getHost();
+        int port = ConfigDB.getPort();
+        String user = ConfigDB.getUser();
+        String password = ConfigDB.getPassword();
+        String database = ConfigDB.getDatabase();
+
+        String urlSinDB =
+                "jdbc:mysql://" + host + ":" + port +
+                        "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+
+        String crearDatabase = "CREATE DATABASE IF NOT EXISTS " + database;
+        String usarDatabase = "USE " + database;
 
         String crearTabla =
                 "CREATE TABLE IF NOT EXISTS PARTIDAS (" +
@@ -28,16 +28,13 @@ public class CrearEstructuraBDMain {
                         "INFOPARTIDA LONGBLOB NOT NULL" +
                         ")";
 
-        try (Connection conn = DriverManager.getConnection(URL_SIN_DB, USER, PASSWORD);
+        try (Connection conn = DriverManager.getConnection(urlSinDB, user, password);
              Statement st = conn.createStatement()) {
 
-
             st.executeUpdate(crearDatabase);
-            System.out.println("Base droneclash creada/verificada.");
-
+            System.out.println("Base " + database + " creada/verificada.");
 
             st.executeUpdate(usarDatabase);
-
 
             st.executeUpdate(crearTabla);
             System.out.println("Tabla PARTIDAS creada/verificada.");
