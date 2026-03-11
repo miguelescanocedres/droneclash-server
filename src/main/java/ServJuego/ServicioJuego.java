@@ -34,7 +34,31 @@ public class ServicioJuego {
     private static final int SEGUNDOS_CUENTA_REGRESIVA_INICIO = 30;
     private static volatile long cuentaRegresivaFinMs = -1L;
 
+    /*public ServicioJuego() {
+        inicializarJuego();
+    }
 
+    private void inicializarJuego() {
+        motorJuego = new MotorJuego();
+        Partida partida = motorJuego.getPartidaActual();
+
+        Jugador jugadorA = new Jugador("playerA", "Player A");
+        Jugador jugadorB = new Jugador("playerB", "Player B");
+        Posicion posDronA = new Posicion(7, 7);
+        DronAereo dronA = new DronAereo(posDronA, jugadorA);
+        partida.getTablero().colocarUnidad(dronA, posDronA);
+        partida.registrarUnidad(dronA);
+
+        Posicion posDronB = new Posicion(7, 10);
+        DronNaval dronB = new DronNaval(posDronB, jugadorB);
+        partida.getTablero().colocarUnidad(dronB, posDronB);
+        partida.registrarUnidad(dronB);
+
+        Posicion posPorta = new Posicion(5, 5);
+        PortaDronesAereo porta = new PortaDronesAereo(posPorta, jugadorA);
+        partida.getTablero().colocarUnidad(porta, posPorta);
+        partida.registrarUnidad(porta);
+    }*/
 
     public ServicioJuego() {
         motorJuego = new MotorJuego();
@@ -48,7 +72,7 @@ public class ServicioJuego {
             throw new ReglaJuegoException("El idJugador es requerido.");
         }
 
-        Partida partida = motorJuego.getPartidaActual();
+        Partida partida = motorJuego.GetPartidaActual();
         TipoEquipo equipoAsignado = partida.agregarJugador(idJugador);
 
 
@@ -71,7 +95,7 @@ public class ServicioJuego {
 
     public static EstadoJuego iniciarPartida()
             throws ReglaJuegoException {
-        Partida partida = motorJuego.getPartidaActual();
+        Partida partida = motorJuego.GetPartidaActual();
         if (partida.getEstado() == EstadoPartida.EN_CURSO) {
             return obtenerEstadoJuego(null);
         }
@@ -93,12 +117,12 @@ public class ServicioJuego {
         if(!accion.getAccion().equals(ConstantesAcciones.PasarTurno)){
             String idACheckear = accion.getIdDron() == null ? accion.getIdPortaDron() : accion.getIdDron();
             if(!RequestDeUnidadValida(idACheckear))
-                throw new ReglaJuegoException("no se puede utilizar la unidad" + idACheckear + "porque este turno ya se utilizo la unidad" + motorJuego.getPartidaActual().getReloj().getUnidadActual());
+                throw new ReglaJuegoException("no se puede utilizar la unidad" + idACheckear + "porque este turno ya se utilizo la unidad" + motorJuego.GetPartidaActual().getReloj().getUnidadActual());
         }
 
         switch (accion.getAccion()) {
             case ConstantesAcciones.MoverDron:
-                motorJuego.procesarMoverDron(
+                motorJuego.ProcesarMoverDron(
                         accion.getIdDron(),
                         accion.getObjetivoY(),
                         accion.getObjetivoX()
@@ -107,7 +131,7 @@ public class ServicioJuego {
                 break;
 
             case ConstantesAcciones.MoverPortaDron:
-                motorJuego.procesarMoverPortaDrones(
+                motorJuego.ProcesarMoverPortaDrones(
                         accion.getIdPortaDron(),
                         accion.getObjetivoY(),
                         accion.getObjetivoX()
@@ -116,13 +140,13 @@ public class ServicioJuego {
                 break;
 
             case ConstantesAcciones.DispararDron:
-                motorJuego.procesarDispararDron(
+                motorJuego.ProcesarDispararDron(
                         accion.getIdDron(),
                         accion.getObjetivoY(),
                         accion.getObjetivoX());
                 break;
             case ConstantesAcciones.PasarTurno:
-                motorJuego.procesarPasarTurno();
+                motorJuego.ProcesarPasarTurno();
                 break;
 
             default:
@@ -132,18 +156,18 @@ public class ServicioJuego {
 
         //Devuelvo el equipo
         String idUnidad = accion.getIdDron() != null ? accion.getIdDron() : accion.getIdPortaDron();
-        Unidad actor = motorJuego.getPartidaActual().buscarUnidadPorId(idUnidad);
+        Unidad actor = motorJuego.GetPartidaActual().buscarUnidadPorId(idUnidad);
         TipoEquipo equipoActor = (actor != null) ? actor.getEquipo().getTipoEquipo() : null;
         return obtenerEstadoJuego(equipoActor);
 
     }
 
     private static boolean RequestDeJugadorActual (String idJugador){
-        return motorJuego.getPartidaActual().getReloj().getJugadorActual().getId().equals(idJugador);
+        return motorJuego.GetPartidaActual().getReloj().getJugadorActual().getId().equals(idJugador);
     }
 
     private static boolean RequestDeUnidadValida (String idUnidad){
-        String idUnidadActual = motorJuego.getPartidaActual().getReloj().getUnidadActual();
+        String idUnidadActual = motorJuego.GetPartidaActual().getReloj().getUnidadActual();
         return idUnidadActual == null || idUnidadActual.equals(idUnidad);
     }
 
@@ -155,7 +179,7 @@ public class ServicioJuego {
     //Convierte los datos reales de las unidades del tablero a DTO y crea al DTO estado de juego.
     private static EstadoJuego convertirAEstadoJuego(TipoEquipo equipoSolicitante) {
         EstadoJuego estadoJuegoDTO = new EstadoJuego();
-        Partida partidaActual = motorJuego.getPartidaActual();
+        Partida partidaActual = motorJuego.GetPartidaActual();
 
         estadoJuegoDTO.setTurno(partidaActual.getTurno());
         estadoJuegoDTO.setEstadoPartida(partidaActual.getEstado().name());
@@ -234,7 +258,7 @@ public class ServicioJuego {
         estadoJuegoDTO.setTablero(new DatosTablero(FILAS, COLUMNAS, celdasOcupadas));
         Jugador jugadorTurnoActual = null;
         if(partidaActual.getEstado() == EstadoPartida.EN_CURSO) {
-            jugadorTurnoActual = motorJuego.getPartidaActual().getReloj().getJugadorActual();
+            jugadorTurnoActual = motorJuego.GetPartidaActual().getReloj().getJugadorActual();
             estadoJuegoDTO.setIdJugadorActual(jugadorTurnoActual.getId());
             estadoJuegoDTO.setEquipoAsignado(jugadorTurnoActual.getEquipo().name());
             estadoJuegoDTO.setTiempoRestante(partidaActual.getReloj().getSegundosRestantes());
@@ -268,7 +292,7 @@ public class ServicioJuego {
     }
 
     public static RespuestaEquipos obtenerEquipos() {
-        Partida partida = motorJuego.getPartidaActual();
+        Partida partida = motorJuego.GetPartidaActual();
 
         List<DatosJugador> equipoAereo = new ArrayList<>();
         for (Jugador j : partida.getEquipoRojo().getJugadores()) {
@@ -334,7 +358,7 @@ public class ServicioJuego {
 
 
     public static DatosHud obtenerDatosHud(String idDron) throws ReglaJuegoException {
-        Partida partidaActual = motorJuego.getPartidaActual();
+        Partida partidaActual = motorJuego.GetPartidaActual();
 
         String turnoDe = RelojJuego.getJugadorActual().getNombre();
 
@@ -356,12 +380,12 @@ public class ServicioJuego {
      // Obtiene el último evento de combate registrado en la partida.
 
     public static EventoCombate obtenerUltimoEventoCombate() {
-        return motorJuego.getPartidaActual().getUltimoEventoCombate();
+        return motorJuego.GetPartidaActual().getUltimoEventoCombate();
     }
 
     public static void ReiniciarPartida(){
-        if (motorJuego != null && motorJuego.getPartidaActual() != null) {
-            motorJuego.getPartidaActual().detenerLoop();
+        if (motorJuego != null && motorJuego.GetPartidaActual() != null) {
+            motorJuego.GetPartidaActual().detenerLoop();
         }
 
         motorJuego = new MotorJuego();
@@ -371,28 +395,30 @@ public class ServicioJuego {
 
     public static long guardarPartida(String idJugador) throws ReglaJuegoException {
 
-            if(motorJuego.getPartidaActual().getReloj().getUnidadActual() != null)
+            if(motorJuego.GetPartidaActual().getReloj().getUnidadActual() != null)
                 throw new ReglaJuegoException("Solo se puede guardar al principio del turno");
 
             PartidaService service = new PartidaService();
             try {
-                long id = service.guardarPartida(motorJuego.getPartidaActual());
+                long id = service.guardarPartida(motorJuego.GetPartidaActual());
                 return id;
-            }catch(SQLException | JsonProcessingException e) {
+            }catch(Exception e) {
                 throw new ReglaJuegoException("Error del servidor");
             }
     }
 
     public static void cargarPartida(long id) throws ReglaJuegoException{
         PartidaService service = new PartidaService();
-        if(motorJuego.getPartidaActual().getEstado() == EstadoPartida.EN_CURSO)
+        if(motorJuego.GetPartidaActual().getEstado() == EstadoPartida.EN_CURSO)
             throw new ReglaJuegoException("La partida esta en curso, no se puede cargar!");
         try {
             Partida partidaCargada = service.cargarPartida(id);
             if(partidaCargada != null) {
-                motorJuego.sobreEscribirPartida(partidaCargada);
+                motorJuego.SobreEscribirPartida(partidaCargada);
             }
-        } catch (JsonProcessingException | SQLException e) {
+        } catch(ReglaJuegoException e){
+            throw e;
+        }catch (Exception e) {
             throw new ReglaJuegoException("Error del servidor");
         }
     }
